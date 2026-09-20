@@ -60,53 +60,83 @@ export default function UserManagement() {
   }
 
   return (
-    <div>
-      <h1>Usuarios</h1>
-      {rowError && <p style={{ color: 'crimson' }}>{rowError}</p>}
-      <table>
-        <thead>
-          <tr><th>Nombre</th><th>Rol</th><th>Activo</th></tr>
-        </thead>
-        <tbody>
-          {profiles.map((p) => (
-            <tr key={p.id}>
-              <td>{p.nombre}</td>
-              <td>
-                <select value={p.rol} onChange={(e) => updateRol(p.id, e.target.value as Profile['rol'])}>
-                  <option value="operador">Operador</option>
-                  <option value="gerencia">Gerencia</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </td>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={p.activo}
-                  onChange={(e) => updateActivo(p.id, e.target.checked)}
-                  aria-label={`Activo — ${p.nombre}`}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="animate-fade-in">
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h1 style={{ marginBottom: '0.25rem' }}>Usuarios</h1>
+        <p className="text-muted">Roles y acceso de cada persona en la plataforma</p>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <h2>Nuevo usuario</h2>
-        <input type="email" placeholder="Correo" required value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })} />
-        <input type="password" placeholder="Contraseña temporal" required value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })} />
-        <input placeholder="Nombre" required value={form.nombre}
-          onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
-        <select value={form.rol} onChange={(e) => setForm({ ...form, rol: e.target.value })}>
-          <option value="operador">Operador</option>
-          <option value="gerencia">Gerencia</option>
-          <option value="admin">Admin</option>
-        </select>
-        {error && <p style={{ color: 'crimson' }}>{error}</p>}
-        <button type="submit">Crear usuario</button>
-      </form>
+      {rowError && <div className="error-banner">{rowError}</div>}
+
+      <section className="card" style={{ marginBottom: '1.5rem' }}>
+        <table>
+          <thead>
+            <tr><th>Nombre</th><th>Rol</th><th>Activo</th></tr>
+          </thead>
+          <tbody>
+            {profiles.map((p) => (
+              <tr key={p.id}>
+                <td>{p.nombre}</td>
+                <td>
+                  <select className="input" value={p.rol} onChange={(e) => updateRol(p.id, e.target.value as Profile['rol'])}>
+                    <option value="operador">Operador</option>
+                    <option value="gerencia">Gerencia</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </td>
+                <td>
+                  <label className="checkbox-field">
+                    <input
+                      type="checkbox"
+                      checked={p.activo}
+                      onChange={(e) => updateActivo(p.id, e.target.checked)}
+                      aria-label={`Activo — ${p.nombre}`}
+                    />
+                    {p.activo ? 'Activo' : 'Inactivo'}
+                  </label>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      <section className="card form-section" style={{ maxWidth: 640 }}>
+        <h2 className="form-section-title">Nuevo usuario</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="field-grid">
+            <div className="field">
+              <label>Correo</label>
+              <input className="input" type="email" required value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })} />
+            </div>
+            <div className="field">
+              <label>Contraseña temporal</label>
+              <input className="input" type="password" required value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })} />
+            </div>
+            <div className="field">
+              <label>Nombre</label>
+              <input className="input" required value={form.nombre}
+                onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
+            </div>
+            <div className="field">
+              <label>Rol</label>
+              <select className="input" value={form.rol} onChange={(e) => setForm({ ...form, rol: e.target.value })}>
+                <option value="operador">Operador</option>
+                <option value="gerencia">Gerencia</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+
+          {error && <div className="error-banner" style={{ marginTop: '1rem' }}>{error}</div>}
+
+          <div className="form-actions">
+            <button type="submit" className="btn btn-primary">Crear usuario</button>
+          </div>
+        </form>
+      </section>
     </div>
   )
 }

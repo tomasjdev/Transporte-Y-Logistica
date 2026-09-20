@@ -47,46 +47,61 @@ export default function RegistroMovimiento() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>Registrar movimiento</h1>
-      <label>
-        Producto
-        <select required value={form.producto_id} onChange={(e) => setForm({ ...form, producto_id: e.target.value })}>
-          <option value="">Selecciona…</option>
-          {productos.map((p) => <option key={p.id} value={p.id}>{p.codigo_interno} — {p.nombre}</option>)}
-        </select>
-      </label>
-      <label>
-        Unidad / Vehículo
-        <select value={form.unidad_vehiculo_id} onChange={(e) => setForm({ ...form, unidad_vehiculo_id: e.target.value })}>
-          <option value="">N/A</option>
-          {camiones.map((c) => <option key={c.id} value={c.id}>{c.numero} — {c.placas}</option>)}
-        </select>
-      </label>
-      {!esOperador && (
-        <label>
-          Tipo
-          <select value={form.tipo_movimiento} onChange={(e) => setForm({ ...form, tipo_movimiento: e.target.value })}>
-            <option value="entrada">Entrada</option>
-            <option value="salida">Salida</option>
-          </select>
-        </label>
-      )}
-      <label>
-        Cantidad
-        <input type="number" required min={0.01} step="0.01" value={form.cantidad}
-          onChange={(e) => setForm({ ...form, cantidad: Number(e.target.value) })} />
-      </label>
-      <label>
-        Motivo
-        <input value={form.motivo} onChange={(e) => setForm({ ...form, motivo: e.target.value })} />
-      </label>
-      <label>
-        Observaciones
-        <textarea value={form.observaciones} onChange={(e) => setForm({ ...form, observaciones: e.target.value })} />
-      </label>
-      {error && <p style={{ color: 'crimson' }}>{error}</p>}
-      <button type="submit" disabled={saving}>Guardar</button>
-    </form>
+    <div className="animate-fade-in" style={{ maxWidth: 640 }}>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h1 style={{ marginBottom: '0.25rem' }}>Registrar movimiento</h1>
+        <p className="text-muted">Entrada o salida de material del inventario</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="card">
+        <div className="field-grid">
+          <div className="field">
+            <label>Producto</label>
+            <select className="input" required value={form.producto_id} onChange={(e) => setForm({ ...form, producto_id: e.target.value })}>
+              <option value="">Selecciona…</option>
+              {productos.map((p) => <option key={p.id} value={p.id}>{p.codigo_interno} — {p.nombre}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <label>Unidad / Vehículo</label>
+            <select className="input" value={form.unidad_vehiculo_id} onChange={(e) => setForm({ ...form, unidad_vehiculo_id: e.target.value })}>
+              <option value="">N/A</option>
+              {camiones.map((c) => <option key={c.id} value={c.id}>{c.numero} — {c.placas}</option>)}
+            </select>
+          </div>
+          {!esOperador && (
+            <div className="field">
+              <label>Tipo</label>
+              <select className="input" value={form.tipo_movimiento} onChange={(e) => setForm({ ...form, tipo_movimiento: e.target.value })}>
+                <option value="entrada">Entrada</option>
+                <option value="salida">Salida</option>
+              </select>
+            </div>
+          )}
+          <div className="field">
+            <label>Cantidad</label>
+            <input className="input" type="number" required min={0.01} step="0.01" value={form.cantidad}
+              onChange={(e) => setForm({ ...form, cantidad: Number(e.target.value) })} />
+          </div>
+          <div className="field">
+            <label>Motivo</label>
+            <input className="input" value={form.motivo} onChange={(e) => setForm({ ...form, motivo: e.target.value })} />
+          </div>
+        </div>
+
+        <div className="field" style={{ marginTop: '1rem' }}>
+          <label>Observaciones</label>
+          <textarea className="input" value={form.observaciones} onChange={(e) => setForm({ ...form, observaciones: e.target.value })} />
+        </div>
+
+        {error && <div className="error-banner" style={{ marginTop: '1rem' }}>{error}</div>}
+
+        <div className="form-actions">
+          <button type="submit" className="btn btn-primary" disabled={saving}>
+            {saving ? 'Guardando…' : 'Guardar'}
+          </button>
+        </div>
+      </form>
+    </div>
   )
 }

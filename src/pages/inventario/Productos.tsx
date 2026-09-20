@@ -3,6 +3,12 @@ import { useAuth } from '../../contexts/AuthContext'
 import { crearProducto, fetchProductos } from '../../lib/inventario'
 import type { Producto } from '../../types/inventario'
 
+function badgeClass(estado: Producto['estado']) {
+  if (estado === 'Agotado') return 'badge badge-danger'
+  if (estado === 'Bajo') return 'badge badge-warning'
+  return 'badge badge-success'
+}
+
 export default function Productos() {
   const { profile } = useAuth()
   const [productos, setProductos] = useState<Producto[]>([])
@@ -29,43 +35,79 @@ export default function Productos() {
   }
 
   return (
-    <div>
-      <h1>Inventario — Productos</h1>
-      <table>
-        <thead>
-          <tr><th>Código</th><th>Nombre</th><th>Stock actual</th><th>Mínimo</th><th>Estado</th></tr>
-        </thead>
-        <tbody>
-          {productos.map((p) => (
-            <tr key={p.id} style={{ color: p.estado === 'Agotado' ? 'crimson' : p.estado === 'Bajo' ? 'darkorange' : 'inherit' }}>
-              <td>{p.codigo_interno}</td>
-              <td>{p.nombre}</td>
-              <td>{p.stock_actual}</td>
-              <td>{p.stock_minimo}</td>
-              <td>{p.estado}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="animate-fade-in">
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h1 style={{ marginBottom: '0.25rem' }}>Inventario — Productos</h1>
+        <p className="text-muted">Existencias y estado de stock de cada producto</p>
+      </div>
+
+      <section className="card" style={{ marginBottom: '1.5rem' }}>
+        <table>
+          <thead>
+            <tr><th>Código</th><th>Nombre</th><th>Stock actual</th><th>Mínimo</th><th>Estado</th></tr>
+          </thead>
+          <tbody>
+            {productos.length === 0 ? (
+              <tr><td colSpan={5} className="text-muted">No hay productos registrados todavía.</td></tr>
+            ) : (
+              productos.map((p) => (
+                <tr key={p.id}>
+                  <td>{p.codigo_interno}</td>
+                  <td>{p.nombre}</td>
+                  <td>{p.stock_actual}</td>
+                  <td>{p.stock_minimo}</td>
+                  <td><span className={badgeClass(p.estado)}>{p.estado}</span></td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </section>
 
       {puedeCrear && (
-        <form onSubmit={handleSubmit}>
-          <h2>Nuevo producto</h2>
-          <input placeholder="Código interno" required value={form.codigo_interno}
-            onChange={(e) => setForm({ ...form, codigo_interno: e.target.value })} />
-          <input placeholder="Nombre" required value={form.nombre}
-            onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
-          <input placeholder="Categoría" value={form.categoria}
-            onChange={(e) => setForm({ ...form, categoria: e.target.value })} />
-          <input placeholder="Unidad de medida" required value={form.unidad_medida}
-            onChange={(e) => setForm({ ...form, unidad_medida: e.target.value })} />
-          <input type="number" placeholder="Stock inicial" value={form.stock_inicial}
-            onChange={(e) => setForm({ ...form, stock_inicial: Number(e.target.value) })} />
-          <input type="number" placeholder="Stock mínimo" value={form.stock_minimo}
-            onChange={(e) => setForm({ ...form, stock_minimo: Number(e.target.value) })} />
-          {error && <p style={{ color: 'crimson' }}>{error}</p>}
-          <button type="submit">Crear producto</button>
-        </form>
+        <section className="card form-section" style={{ maxWidth: 640 }}>
+          <h2 className="form-section-title">Nuevo producto</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="field-grid">
+              <div className="field">
+                <label>Código interno</label>
+                <input className="input" required value={form.codigo_interno}
+                  onChange={(e) => setForm({ ...form, codigo_interno: e.target.value })} />
+              </div>
+              <div className="field">
+                <label>Nombre</label>
+                <input className="input" required value={form.nombre}
+                  onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
+              </div>
+              <div className="field">
+                <label>Categoría</label>
+                <input className="input" value={form.categoria}
+                  onChange={(e) => setForm({ ...form, categoria: e.target.value })} />
+              </div>
+              <div className="field">
+                <label>Unidad de medida</label>
+                <input className="input" required value={form.unidad_medida}
+                  onChange={(e) => setForm({ ...form, unidad_medida: e.target.value })} />
+              </div>
+              <div className="field">
+                <label>Stock inicial</label>
+                <input className="input" type="number" value={form.stock_inicial}
+                  onChange={(e) => setForm({ ...form, stock_inicial: Number(e.target.value) })} />
+              </div>
+              <div className="field">
+                <label>Stock mínimo</label>
+                <input className="input" type="number" value={form.stock_minimo}
+                  onChange={(e) => setForm({ ...form, stock_minimo: Number(e.target.value) })} />
+              </div>
+            </div>
+
+            {error && <div className="error-banner" style={{ marginTop: '1rem' }}>{error}</div>}
+
+            <div className="form-actions">
+              <button type="submit" className="btn btn-primary">Crear producto</button>
+            </div>
+          </form>
+        </section>
       )}
     </div>
   )

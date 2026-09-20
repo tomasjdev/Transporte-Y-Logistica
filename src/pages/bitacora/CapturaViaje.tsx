@@ -87,7 +87,7 @@ export default function CapturaViaje() {
     previewLiquidacion(payload).then(setLiquidacion).catch(() => setLiquidacion(null))
   }, [payload])
 
-  if (!payload) return <p>Cargando…</p>
+  if (!payload) return <p className="text-muted">Cargando…</p>
 
   function update<K extends keyof ViajePayload>(key: K, value: ViajePayload[K]) {
     setPayload((prev) => (prev ? { ...prev, [key]: value } : prev))
@@ -108,174 +108,185 @@ export default function CapturaViaje() {
   }
 
   return (
-    <div>
-      <h1>Captura de viaje</h1>
+    <div className="animate-fade-in">
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h1 style={{ marginBottom: '0.25rem' }}>Captura de viaje</h1>
+        <p className="text-muted">Completa los datos del viaje para calcular la liquidación</p>
+      </div>
 
-      <section>
-        <h2>1. Datos generales</h2>
-        <label>
-          Camión
-          <select value={payload.camion_id} onChange={(e) => {
-            const camion = camiones.find((c) => c.id === e.target.value)
-            update('camion_id', e.target.value)
-            update('placas', camion?.placas ?? '')
-          }}>
-            <option value="">Selecciona…</option>
-            {camiones.map((c) => (
-              <option key={c.id} value={c.id}>{c.numero} — {c.placas ?? 'sin placas'}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Peso
-          <select value={payload.peso_categoria} onChange={(e) => update('peso_categoria', e.target.value)}>
-            <option value="">Selecciona…</option>
-            {pesos.map((p) => <option key={p.id} value={p.categoria}>{p.categoria}</option>)}
-          </select>
-        </label>
-        <label>
-          Destino
-          <select value={payload.destino_estado} onChange={(e) => update('destino_estado', e.target.value)}>
-            <option value="">Selecciona…</option>
-            {estados.map((s) => <option key={s.id} value={s.nombre}>{s.nombre}</option>)}
-          </select>
-        </label>
-        <label>
-          Empresa que carga
-          <input type="text" value={payload.empresa_carga} onChange={(e) => update('empresa_carga', e.target.value)} />
-        </label>
-        <label>
-          Tipo de viaje
-          <select value={payload.tipo_viaje} onChange={(e) => update('tipo_viaje', e.target.value as 'Sencillo' | 'Redondo')}>
-            <option value="Sencillo">Sencillo</option>
-            <option value="Redondo">Redondo</option>
-          </select>
-        </label>
-        <label>
-          Combustible
-          <select value={payload.tipo_combustible} onChange={(e) => update('tipo_combustible', e.target.value as 'Gasolina' | 'Diesel')}>
-            <option value="Diesel">Diesel</option>
-            <option value="Gasolina">Gasolina</option>
-          </select>
-        </label>
-        <label>
-          Fecha
-          <input type="date" value={payload.fecha} onChange={(e) => update('fecha', e.target.value)} />
-        </label>
-        <label>
-          Km salida
-          <input type="number" value={payload.km_salida} onChange={(e) => update('km_salida', Number(e.target.value))} />
-        </label>
-        <label>
-          Km llegada
-          <input type="number" value={payload.km_llegada} onChange={(e) => update('km_llegada', Number(e.target.value))} />
-        </label>
-        <label>
-          Gastos depositados
-          <input type="number" value={payload.gastos_depositados} onChange={(e) => update('gastos_depositados', Number(e.target.value))} />
-        </label>
-        <label>
-          Observaciones
-          <textarea value={payload.observaciones} onChange={(e) => update('observaciones', e.target.value)} />
-        </label>
+      <section className="card form-section">
+        <h2 className="form-section-title">1. Datos generales</h2>
+        <div className="field-grid">
+          <div className="field">
+            <label>Camión</label>
+            <select
+              className="input"
+              value={payload.camion_id}
+              onChange={(e) => {
+                const camion = camiones.find((c) => c.id === e.target.value)
+                update('camion_id', e.target.value)
+                update('placas', camion?.placas ?? '')
+              }}
+            >
+              <option value="">Selecciona…</option>
+              {camiones.map((c) => (
+                <option key={c.id} value={c.id}>{c.numero} — {c.placas ?? 'sin placas'}</option>
+              ))}
+            </select>
+          </div>
+          <div className="field">
+            <label>Peso</label>
+            <select className="input" value={payload.peso_categoria} onChange={(e) => update('peso_categoria', e.target.value)}>
+              <option value="">Selecciona…</option>
+              {pesos.map((p) => <option key={p.id} value={p.categoria}>{p.categoria}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <label>Destino</label>
+            <select className="input" value={payload.destino_estado} onChange={(e) => update('destino_estado', e.target.value)}>
+              <option value="">Selecciona…</option>
+              {estados.map((s) => <option key={s.id} value={s.nombre}>{s.nombre}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <label>Empresa que carga</label>
+            <input className="input" type="text" value={payload.empresa_carga} onChange={(e) => update('empresa_carga', e.target.value)} />
+          </div>
+          <div className="field">
+            <label>Tipo de viaje</label>
+            <select className="input" value={payload.tipo_viaje} onChange={(e) => update('tipo_viaje', e.target.value as 'Sencillo' | 'Redondo')}>
+              <option value="Sencillo">Sencillo</option>
+              <option value="Redondo">Redondo</option>
+            </select>
+          </div>
+          <div className="field">
+            <label>Combustible</label>
+            <select className="input" value={payload.tipo_combustible} onChange={(e) => update('tipo_combustible', e.target.value as 'Gasolina' | 'Diesel')}>
+              <option value="Diesel">Diesel</option>
+              <option value="Gasolina">Gasolina</option>
+            </select>
+          </div>
+          <div className="field">
+            <label>Fecha</label>
+            <input className="input" type="date" value={payload.fecha} onChange={(e) => update('fecha', e.target.value)} />
+          </div>
+          <div className="field">
+            <label>Km salida</label>
+            <input className="input" type="number" value={payload.km_salida} onChange={(e) => update('km_salida', Number(e.target.value))} />
+          </div>
+          <div className="field">
+            <label>Km llegada</label>
+            <input className="input" type="number" value={payload.km_llegada} onChange={(e) => update('km_llegada', Number(e.target.value))} />
+          </div>
+          <div className="field">
+            <label>Gastos depositados</label>
+            <input className="input" type="number" value={payload.gastos_depositados} onChange={(e) => update('gastos_depositados', Number(e.target.value))} />
+          </div>
+        </div>
+        <div className="field" style={{ marginTop: '1rem' }}>
+          <label>Observaciones</label>
+          <textarea className="input" value={payload.observaciones} onChange={(e) => update('observaciones', e.target.value)} />
+        </div>
       </section>
 
-      <section>
-        <h2>2. Fletes</h2>
+      <section className="card form-section">
+        <h2 className="form-section-title">2. Fletes</h2>
         {payload.fletes.map((f, i) => (
-          <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <label>
-              Descripción
-              <input type="text" value={f.descripcion} onChange={(e) => {
+          <div key={i} className="list-row">
+            <div className="field">
+              <label>Descripción</label>
+              <input className="input" type="text" value={f.descripcion} onChange={(e) => {
                 const fletes = [...payload.fletes]
                 fletes[i] = { ...f, descripcion: e.target.value }
                 update('fletes', fletes)
               }} />
-            </label>
-            <label>
-              Monto
-              <input type="number" value={f.monto} onChange={(e) => {
+            </div>
+            <div className="field" style={{ maxWidth: 160 }}>
+              <label>Monto</label>
+              <input className="input" type="number" value={f.monto} onChange={(e) => {
                 const fletes = [...payload.fletes]
                 fletes[i] = { ...f, monto: Number(e.target.value) }
                 update('fletes', fletes)
               }} />
-            </label>
-            <button type="button" onClick={() => {
+            </div>
+            <button type="button" className="btn btn-danger-ghost btn-sm" onClick={() => {
               const fletes = payload.fletes.filter((_, idx) => idx !== i)
               update('fletes', fletes)
             }}>Quitar</button>
           </div>
         ))}
-        <button type="button" onClick={() => update('fletes', [...payload.fletes, { descripcion: '', monto: 0 }])}>
+        <button type="button" className="btn btn-ghost btn-sm" onClick={() => update('fletes', [...payload.fletes, { descripcion: '', monto: 0 }])}>
           + Agregar flete
         </button>
       </section>
 
-      <section>
-        <h2>3. Casetas (1 a 26)</h2>
-        {payload.casetas.map((c, i) => (
-          <label key={c.numero}>
-            Caseta {c.numero}
-            <input type="number" value={c.monto} onChange={(e) => {
-              const casetas = [...payload.casetas]
-              casetas[i] = { ...c, monto: Number(e.target.value) }
-              update('casetas', casetas)
-            }} />
-          </label>
-        ))}
+      <section className="card form-section">
+        <h2 className="form-section-title">3. Casetas (1 a 26)</h2>
+        <div className="casetas-grid">
+          {payload.casetas.map((c, i) => (
+            <div className="field" key={c.numero}>
+              <label>Caseta {c.numero}</label>
+              <input className="input" type="number" value={c.monto} onChange={(e) => {
+                const casetas = [...payload.casetas]
+                casetas[i] = { ...c, monto: Number(e.target.value) }
+                update('casetas', casetas)
+              }} />
+            </div>
+          ))}
+        </div>
       </section>
 
-      <section>
-        <h2>4. Recargas de combustible</h2>
+      <section className="card form-section">
+        <h2 className="form-section-title">4. Recargas de combustible</h2>
         {payload.recargas.map((r, i) => (
-          <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-            <label>
-              Orden
-              <input type="number" value={r.orden} onChange={(e) => {
+          <div key={i} className="list-row">
+            <div className="field" style={{ maxWidth: 90 }}>
+              <label>Orden</label>
+              <input className="input" type="number" value={r.orden} onChange={(e) => {
                 const recargas = [...payload.recargas]
                 recargas[i] = { ...r, orden: Number(e.target.value) }
                 update('recargas', recargas)
               }} />
-            </label>
-            <label>
-              Lugar
-              <input type="text" value={r.lugar} onChange={(e) => {
+            </div>
+            <div className="field">
+              <label>Lugar</label>
+              <input className="input" type="text" value={r.lugar} onChange={(e) => {
                 const recargas = [...payload.recargas]
                 recargas[i] = { ...r, lugar: e.target.value }
                 update('recargas', recargas)
               }} />
-            </label>
-            <label>
-              Litros
-              <input type="number" value={r.litros} onChange={(e) => {
+            </div>
+            <div className="field" style={{ maxWidth: 120 }}>
+              <label>Litros</label>
+              <input className="input" type="number" value={r.litros} onChange={(e) => {
                 const recargas = [...payload.recargas]
                 recargas[i] = { ...r, litros: Number(e.target.value) }
                 update('recargas', recargas)
               }} />
-            </label>
-            <label>
-              Monto
-              <input type="number" value={r.monto} onChange={(e) => {
+            </div>
+            <div className="field" style={{ maxWidth: 140 }}>
+              <label>Monto</label>
+              <input className="input" type="number" value={r.monto} onChange={(e) => {
                 const recargas = [...payload.recargas]
                 recargas[i] = { ...r, monto: Number(e.target.value) }
                 update('recargas', recargas)
               }} />
-            </label>
-            <label>
-              Relleno final
+            </div>
+            <label className="checkbox-field" style={{ paddingBottom: '0.75rem' }}>
               <input type="checkbox" checked={r.es_relleno_final} onChange={(e) => {
                 const recargas = [...payload.recargas]
                 recargas[i] = { ...r, es_relleno_final: e.target.checked }
                 update('recargas', recargas)
               }} />
+              Relleno final
             </label>
-            <button type="button" onClick={() => {
+            <button type="button" className="btn btn-danger-ghost btn-sm" onClick={() => {
               const recargas = payload.recargas.filter((_, idx) => idx !== i)
               update('recargas', recargas)
             }}>Quitar</button>
           </div>
         ))}
-        <button type="button" onClick={() => update('recargas', [
+        <button type="button" className="btn btn-ghost btn-sm" onClick={() => update('recargas', [
           ...payload.recargas,
           { orden: payload.recargas.length + 1, lugar: '', litros: 0, monto: 0, es_relleno_final: false },
         ])}>
@@ -283,74 +294,101 @@ export default function CapturaViaje() {
         </button>
       </section>
 
-      <section>
-        <h2>5. Gastos extra</h2>
+      <section className="card form-section">
+        <h2 className="form-section-title">5. Gastos extra</h2>
         {payload.gastos_extra.map((g, i) => (
-          <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <label>
-              Concepto
-              <input type="text" value={g.concepto} onChange={(e) => {
+          <div key={i} className="list-row">
+            <div className="field">
+              <label>Concepto</label>
+              <input className="input" type="text" value={g.concepto} onChange={(e) => {
                 const gastos = [...payload.gastos_extra]
                 gastos[i] = { ...g, concepto: e.target.value }
                 update('gastos_extra', gastos)
               }} />
-            </label>
-            <label>
-              Monto
-              <input type="number" value={g.monto} onChange={(e) => {
+            </div>
+            <div className="field" style={{ maxWidth: 160 }}>
+              <label>Monto</label>
+              <input className="input" type="number" value={g.monto} onChange={(e) => {
                 const gastos = [...payload.gastos_extra]
                 gastos[i] = { ...g, monto: Number(e.target.value) }
                 update('gastos_extra', gastos)
               }} />
-            </label>
-            <button type="button" onClick={() => {
+            </div>
+            <button type="button" className="btn btn-danger-ghost btn-sm" onClick={() => {
               const gastos = payload.gastos_extra.filter((_, idx) => idx !== i)
               update('gastos_extra', gastos)
             }}>Quitar</button>
           </div>
         ))}
-        <button type="button" onClick={() => update('gastos_extra', [...payload.gastos_extra, { concepto: '', monto: 0 }])}>
+        <button type="button" className="btn btn-ghost btn-sm" onClick={() => update('gastos_extra', [...payload.gastos_extra, { concepto: '', monto: 0 }])}>
           + Agregar gasto extra
         </button>
       </section>
 
-      <section>
-        <h2>6. Inventario de la unidad</h2>
-        {payload.inventario_unidad.map((inv, i) => (
-          <label key={inv.componente}>
-            {inv.componente}
-            <select value={inv.estado} onChange={(e) => {
-              const inventario = [...payload.inventario_unidad]
-              inventario[i] = { ...inv, estado: e.target.value as 'OK' | 'Falta' | 'Malo' }
-              update('inventario_unidad', inventario)
-            }}>
-              <option value="OK">OK</option>
-              <option value="Falta">Falta</option>
-              <option value="Malo">Malo</option>
-            </select>
-          </label>
-        ))}
+      <section className="card form-section">
+        <h2 className="form-section-title">6. Inventario de la unidad</h2>
+        <div className="field-grid">
+          {payload.inventario_unidad.map((inv, i) => (
+            <div className="field" key={inv.componente}>
+              <label>{inv.componente}</label>
+              <select className="input" value={inv.estado} onChange={(e) => {
+                const inventario = [...payload.inventario_unidad]
+                inventario[i] = { ...inv, estado: e.target.value as 'OK' | 'Falta' | 'Malo' }
+                update('inventario_unidad', inventario)
+              }}>
+                <option value="OK">OK</option>
+                <option value="Falta">Falta</option>
+                <option value="Malo">Malo</option>
+              </select>
+            </div>
+          ))}
+        </div>
       </section>
 
       {liquidacion && (
-        <section>
-          <h2>Liquidación (vista previa)</h2>
-          <p>Km recorridos: {liquidacion.km_recorridos ?? 0}</p>
-          <p>Litros teóricos: {(liquidacion.litros_teoricos ?? 0).toFixed(2)}</p>
-          <p>Litros devueltos: {liquidacion.litros_devueltos ?? 0}</p>
-          <p>Comisión: ${(liquidacion.comision_monto ?? 0).toFixed(2)}</p>
-          <p>Balance efectivo (Sobró): ${(liquidacion.balance_efectivo ?? 0).toFixed(2)}</p>
-          <p>Ajuste por rendimiento: ${(liquidacion.ajuste_rendimiento ?? 0).toFixed(2)}</p>
-          <p><strong>Sueldo final: ${(liquidacion.sueldo_final ?? 0).toFixed(2)}</strong></p>
+        <section className="card liquidacion-panel form-section">
+          <h2 className="form-section-title">Liquidación (vista previa)</h2>
+          <div className="liquidacion-grid">
+            <div className="liquidacion-item">
+              <span className="label">Km recorridos</span>
+              <span className="value">{liquidacion.km_recorridos ?? 0}</span>
+            </div>
+            <div className="liquidacion-item">
+              <span className="label">Litros teóricos</span>
+              <span className="value">{(liquidacion.litros_teoricos ?? 0).toFixed(2)}</span>
+            </div>
+            <div className="liquidacion-item">
+              <span className="label">Litros devueltos</span>
+              <span className="value">{liquidacion.litros_devueltos ?? 0}</span>
+            </div>
+            <div className="liquidacion-item">
+              <span className="label">Comisión</span>
+              <span className="value">${(liquidacion.comision_monto ?? 0).toFixed(2)}</span>
+            </div>
+            <div className="liquidacion-item">
+              <span className="label">Balance efectivo (Sobró)</span>
+              <span className="value">${(liquidacion.balance_efectivo ?? 0).toFixed(2)}</span>
+            </div>
+            <div className="liquidacion-item">
+              <span className="label">Ajuste por rendimiento</span>
+              <span className="value">${(liquidacion.ajuste_rendimiento ?? 0).toFixed(2)}</span>
+            </div>
+            <div className="liquidacion-item highlight">
+              <span className="label">Sueldo final</span>
+              <span className="value">${(liquidacion.sueldo_final ?? 0).toFixed(2)}</span>
+            </div>
+          </div>
         </section>
       )}
 
-      {error && <p style={{ color: 'crimson' }}>{error}</p>}
+      {error && <div className="error-banner">{error}</div>}
 
-      <button disabled={saving} onClick={() => handleSave('borrador')}>Guardar borrador</button>
-      {(profile?.rol === 'gerencia' || profile?.rol === 'admin') && (
-        <button disabled={saving} onClick={() => handleSave('liquidado')}>Liquidar</button>
-      )}
+      <div className="form-actions">
+        <button className="btn btn-ghost" disabled={saving} onClick={() => handleSave('borrador')}>Guardar borrador</button>
+        {(profile?.rol === 'gerencia' || profile?.rol === 'admin') && (
+          <button className="btn btn-primary" disabled={saving} onClick={() => handleSave('liquidado')}>Liquidar</button>
+        )}
+      </div>
     </div>
   )
 }
