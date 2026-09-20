@@ -449,6 +449,106 @@ export type Database = {
           },
         ]
       }
+      inventario_movimientos: {
+        Row: {
+          cantidad: number
+          creado_en: string
+          id: string
+          motivo: string | null
+          observaciones: string | null
+          producto_id: string
+          responsable_id: string
+          tipo_movimiento: string
+          unidad_vehiculo_id: string | null
+        }
+        Insert: {
+          cantidad: number
+          creado_en?: string
+          id?: string
+          motivo?: string | null
+          observaciones?: string | null
+          producto_id: string
+          responsable_id: string
+          tipo_movimiento: string
+          unidad_vehiculo_id?: string | null
+        }
+        Update: {
+          cantidad?: number
+          creado_en?: string
+          id?: string
+          motivo?: string | null
+          observaciones?: string | null
+          producto_id?: string
+          responsable_id?: string
+          tipo_movimiento?: string
+          unidad_vehiculo_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventario_movimientos_producto_id_fkey"
+            columns: ["producto_id"]
+            isOneToOne: false
+            referencedRelation: "inventario_productos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventario_movimientos_responsable_id_fkey"
+            columns: ["responsable_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventario_movimientos_unidad_vehiculo_id_fkey"
+            columns: ["unidad_vehiculo_id"]
+            isOneToOne: false
+            referencedRelation: "bitacora_camiones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventario_productos: {
+        Row: {
+          activo: boolean
+          categoria: string | null
+          codigo_interno: string
+          creado_en: string
+          estado: string
+          id: string
+          nombre: string
+          stock_actual: number
+          stock_inicial: number
+          stock_minimo: number
+          unidad_medida: string
+        }
+        Insert: {
+          activo?: boolean
+          categoria?: string | null
+          codigo_interno: string
+          creado_en?: string
+          estado?: string
+          id?: string
+          nombre: string
+          stock_actual?: number
+          stock_inicial?: number
+          stock_minimo?: number
+          unidad_medida: string
+        }
+        Update: {
+          activo?: boolean
+          categoria?: string | null
+          codigo_interno?: string
+          creado_en?: string
+          estado?: string
+          id?: string
+          nombre?: string
+          stock_actual?: number
+          stock_inicial?: number
+          stock_minimo?: number
+          unidad_medida?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           activo: boolean
