@@ -73,6 +73,20 @@ Deno.serve(async (req: Request) => {
     })
   }
 
+  // handle_new_user() always inserts the new profile with rol = 'operador'
+  // (it never trusts client-supplied metadata — see
+  // 20260920112458_fix_open_signup_privilege_escalation.sql). Explicitly
+  // set the intended role here, using the already-instantiated
+  // service-role client, now that the user (and its trigger-created
+  // profile row) exists.
+  const { error: roleError } = await adminClient.from("profiles").update({ rol }).eq("id", created.user.id)
+  if (roleError) {
+    return new Response(JSON.stringify({ error: roleError.message }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    })
+  }
+
   return new Response(JSON.stringify({ id: created.user.id }), {
     status: 200,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
