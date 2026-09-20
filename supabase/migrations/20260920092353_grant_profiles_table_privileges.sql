@@ -1,4 +1,4 @@
--- supabase/migrations/20260920100500_grant_profiles_table_privileges.sql
+-- supabase/migrations/20260920092353_grant_profiles_table_privileges.sql
 
 -- The foundation migration created RLS policies on public.profiles but never
 -- granted the baseline table-level privileges to the authenticated role (this
