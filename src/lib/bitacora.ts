@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient'
+import type { Json } from '../types/database'
 import type {
   Camion,
   Caseta,
@@ -14,30 +15,6 @@ import type {
   Viaje,
   ViajePayload,
 } from '../types/bitacora'
-
-/**
- * `guardar_viaje`, `calcular_liquidacion` and `obtener_parametros_liquidacion`
- * exist in the live database (see supabase/migrations/20260920100400_*.sql
- * and 20260920100500_*.sql / 20260920100700_*.sql) and are covered by RLS
- * grants, but `src/types/database.ts` was generated with an empty
- * `public.Functions` map (`[_ in never]: never`) — the generator run did not
- * pick these RPCs up. That makes `keyof Database['public']['Functions']`
- * resolve to `never`, so `supabase.rpc('guardar_viaje', ...)` would fail to
- * type-check even though the call is valid at runtime.
- *
- * Until `database.ts` is regenerated against the current schema, RPC calls
- * are routed through this narrow, explicitly-`any`-cast helper instead of
- * casting the whole `bitacora.ts` module. Every other export in this file
- * keeps full type safety from the generated `Database` type.
- */
-function rpc(fn: string, args: Record<string, unknown>) {
-  return (supabase.rpc as unknown as (
-    fn: string,
-    args: Record<string, unknown>,
-  ) => PromiseLike<{ data: unknown; error: { message: string } | null }> & {
-    single: () => PromiseLike<{ data: unknown; error: { message: string } | null }>
-  })(fn, args)
-}
 
 export async function fetchCatalogos(): Promise<Catalogos> {
   const [camiones, pesos, estados, componentes] = await Promise.all([
@@ -101,46 +78,44 @@ export async function fetchViaje(id: string): Promise<ViajeDetalle> {
   }
 }
 
-interface ParametrosLiquidacion {
-  rendimiento_aplicado: number
-  comision_porcentaje: number
-  precio_litro_ahorro: number
-  precio_penalizacion: number
-}
-
 export async function previewLiquidacion(payload: ViajePayload): Promise<Liquidacion> {
   const totalFletes = payload.fletes.reduce((sum, f) => sum + f.monto, 0)
   const totalLitros = payload.recargas.reduce((sum, r) => sum + r.litros, 0)
   const totalCasetas = payload.casetas.reduce((sum, c) => sum + c.monto, 0)
   const totalGastosExtra = payload.gastos_extra.reduce((sum, g) => sum + g.monto, 0)
 
-  const { data: params, error: paramsError } = await rpc('obtener_parametros_liquidacion', {
-    p_peso_categoria: payload.peso_categoria,
-    p_tipo_viaje: payload.tipo_viaje,
-    p_tipo_combustible: payload.tipo_combustible,
-  }).single()
+  const { data: params, error: paramsError } = await supabase
+    .rpc('obtener_parametros_liquidacion', {
+      p_peso_categoria: payload.peso_categoria,
+      p_tipo_viaje: payload.tipo_viaje,
+      p_tipo_combustible: payload.tipo_combustible,
+    })
+    .single()
   if (paramsError) throw paramsError
-  const parametros = params as ParametrosLiquidacion
 
-  const { data, error } = await rpc('calcular_liquidacion', {
-    p_km_salida: payload.km_salida,
-    p_km_llegada: payload.km_llegada,
-    p_total_litros: totalLitros,
-    p_total_casetas: totalCasetas,
-    p_total_gastos_extra: totalGastosExtra,
-    p_total_fletes: totalFletes,
-    p_gastos_depositados: payload.gastos_depositados,
-    p_rendimiento_aplicado: parametros.rendimiento_aplicado,
-    p_comision_porcentaje: parametros.comision_porcentaje,
-    p_precio_litro_ahorro: parametros.precio_litro_ahorro,
-    p_precio_penalizacion: parametros.precio_penalizacion,
-  }).single()
+  const { data, error } = await supabase
+    .rpc('calcular_liquidacion', {
+      p_km_salida: payload.km_salida,
+      p_km_llegada: payload.km_llegada,
+      p_total_litros: totalLitros,
+      p_total_casetas: totalCasetas,
+      p_total_gastos_extra: totalGastosExtra,
+      p_total_fletes: totalFletes,
+      p_gastos_depositados: payload.gastos_depositados,
+      p_rendimiento_aplicado: params.rendimiento_aplicado,
+      p_comision_porcentaje: params.comision_porcentaje,
+      p_precio_litro_ahorro: params.precio_litro_ahorro,
+      p_precio_penalizacion: params.precio_penalizacion,
+    })
+    .single()
   if (error) throw error
   return data as Liquidacion
 }
 
 export async function guardarViaje(payload: ViajePayload): Promise<string> {
-  const { data, error } = await rpc('guardar_viaje', { p_viaje: payload })
+  const { data, error } = await supabase.rpc('guardar_viaje', {
+    p_viaje: payload as unknown as Json,
+  })
   if (error) throw error
-  return data as string
+  return data
 }

@@ -478,7 +478,46 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calcular_liquidacion: {
+        Args: {
+          p_comision_porcentaje: number
+          p_gastos_depositados: number
+          p_km_llegada: number
+          p_km_salida: number
+          p_precio_litro_ahorro: number
+          p_precio_penalizacion: number
+          p_rendimiento_aplicado: number
+          p_total_casetas: number
+          p_total_fletes: number
+          p_total_gastos_extra: number
+          p_total_litros: number
+        }
+        Returns: {
+          ajuste_rendimiento: number
+          balance_efectivo: number
+          comision_monto: number
+          efectivo_gastado: number
+          km_recorridos: number
+          litros_devueltos: number
+          litros_teoricos: number
+          rendimiento_real: number
+          sueldo_final: number
+        }[]
+      }
+      guardar_viaje: { Args: { p_viaje: Json }; Returns: string }
+      obtener_parametros_liquidacion: {
+        Args: {
+          p_peso_categoria: string
+          p_tipo_combustible: string
+          p_tipo_viaje: string
+        }
+        Returns: {
+          comision_porcentaje: number
+          precio_litro_ahorro: number
+          precio_penalizacion: number
+          rendimiento_aplicado: number
+        }[]
+      }
     }
     Enums: {
       app_role: "operador" | "gerencia" | "admin"
