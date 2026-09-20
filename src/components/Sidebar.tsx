@@ -11,6 +11,7 @@ export default function Sidebar() {
       <NavLink to="/">Dashboard</NavLink>
       <NavLink to="/bitacora">Bitácora</NavLink>
       <NavLink to="/inventario">Inventario</NavLink>
+      <NavLink to="/inventario/movimientos">Movimientos</NavLink>
       {profile?.rol === 'admin' && <NavLink to="/usuarios">Usuarios</NavLink>}
       {isManager && <NavLink to="/bitacora/catalogos">Catálogos</NavLink>}
       <button onClick={signOut}>Cerrar sesión</button>
