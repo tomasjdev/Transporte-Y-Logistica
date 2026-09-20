@@ -11,6 +11,7 @@ import Catalogos from './pages/bitacora/Catalogos'
 import Productos from './pages/inventario/Productos'
 import RegistroMovimiento from './pages/inventario/RegistroMovimiento'
 import Movimientos from './pages/inventario/Movimientos'
+import UserManagement from './pages/UserManagement'
 
 function App() {
   return (
@@ -103,6 +104,16 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <Movimientos />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/usuarios"
+          element={
+            <ProtectedRoute roles={['admin']}>
+              <Layout>
+                <UserManagement />
               </Layout>
             </ProtectedRoute>
           }
