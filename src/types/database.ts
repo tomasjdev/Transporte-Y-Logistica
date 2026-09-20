@@ -35,6 +35,35 @@ export type Database = {
         }
         Relationships: []
       }
+      bitacora_casetas: {
+        Row: {
+          id: string
+          monto: number
+          numero: number
+          viaje_id: string
+        }
+        Insert: {
+          id?: string
+          monto?: number
+          numero: number
+          viaje_id: string
+        }
+        Update: {
+          id?: string
+          monto?: number
+          numero?: number
+          viaje_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bitacora_casetas_viaje_id_fkey"
+            columns: ["viaje_id"]
+            isOneToOne: false
+            referencedRelation: "bitacora_viajes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bitacora_componentes: {
         Row: {
           id: string
@@ -89,6 +118,93 @@ export type Database = {
         }
         Relationships: []
       }
+      bitacora_fletes: {
+        Row: {
+          descripcion: string | null
+          id: string
+          monto: number
+          viaje_id: string
+        }
+        Insert: {
+          descripcion?: string | null
+          id?: string
+          monto?: number
+          viaje_id: string
+        }
+        Update: {
+          descripcion?: string | null
+          id?: string
+          monto?: number
+          viaje_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bitacora_fletes_viaje_id_fkey"
+            columns: ["viaje_id"]
+            isOneToOne: false
+            referencedRelation: "bitacora_viajes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bitacora_gastos_extra: {
+        Row: {
+          concepto: string
+          id: string
+          monto: number
+          viaje_id: string
+        }
+        Insert: {
+          concepto: string
+          id?: string
+          monto?: number
+          viaje_id: string
+        }
+        Update: {
+          concepto?: string
+          id?: string
+          monto?: number
+          viaje_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bitacora_gastos_extra_viaje_id_fkey"
+            columns: ["viaje_id"]
+            isOneToOne: false
+            referencedRelation: "bitacora_viajes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bitacora_inventario_unidad: {
+        Row: {
+          componente: string
+          estado: string
+          id: string
+          viaje_id: string
+        }
+        Insert: {
+          componente: string
+          estado?: string
+          id?: string
+          viaje_id: string
+        }
+        Update: {
+          componente?: string
+          estado?: string
+          id?: string
+          viaje_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bitacora_inventario_unidad_viaje_id_fkey"
+            columns: ["viaje_id"]
+            isOneToOne: false
+            referencedRelation: "bitacora_viajes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bitacora_pesos: {
         Row: {
           categoria: string
@@ -109,6 +225,44 @@ export type Database = {
           orden?: number
         }
         Relationships: []
+      }
+      bitacora_recargas: {
+        Row: {
+          es_relleno_final: boolean
+          id: string
+          litros: number
+          lugar: string | null
+          monto: number
+          orden: number
+          viaje_id: string
+        }
+        Insert: {
+          es_relleno_final?: boolean
+          id?: string
+          litros?: number
+          lugar?: string | null
+          monto?: number
+          orden?: number
+          viaje_id: string
+        }
+        Update: {
+          es_relleno_final?: boolean
+          id?: string
+          litros?: number
+          lugar?: string | null
+          monto?: number
+          orden?: number
+          viaje_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bitacora_recargas_viaje_id_fkey"
+            columns: ["viaje_id"]
+            isOneToOne: false
+            referencedRelation: "bitacora_viajes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bitacora_rendimientos: {
         Row: {
@@ -132,6 +286,162 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "bitacora_rendimientos_peso_categoria_fkey"
+            columns: ["peso_categoria"]
+            isOneToOne: false
+            referencedRelation: "bitacora_pesos"
+            referencedColumns: ["categoria"]
+          },
+        ]
+      }
+      bitacora_viajes: {
+        Row: {
+          ajuste_rendimiento: number
+          balance_efectivo: number
+          camion_id: string
+          comision_monto: number
+          comision_porcentaje: number | null
+          creado_en: string
+          creado_por: string
+          destino_estado: string | null
+          efectivo_gastado: number
+          empresa_carga: string | null
+          estatus: string
+          fecha: string
+          folio: number
+          gastos_depositados: number
+          id: string
+          km_llegada: number
+          km_recorridos: number
+          km_salida: number
+          liquidado_en: string | null
+          litros_devueltos: number
+          litros_teoricos: number
+          observaciones: string | null
+          operador_id: string
+          peso_categoria: string
+          placas: string | null
+          precio_litro_ahorro: number | null
+          precio_penalizacion: number | null
+          rendimiento_aplicado: number | null
+          rendimiento_real: number
+          sueldo_final: number
+          tipo_combustible: string
+          tipo_viaje: string
+          total_casetas: number
+          total_combustible: number
+          total_fletes: number
+          total_gastos_extra: number
+          total_litros: number
+        }
+        Insert: {
+          ajuste_rendimiento?: number
+          balance_efectivo?: number
+          camion_id: string
+          comision_monto?: number
+          comision_porcentaje?: number | null
+          creado_en?: string
+          creado_por: string
+          destino_estado?: string | null
+          efectivo_gastado?: number
+          empresa_carga?: string | null
+          estatus?: string
+          fecha?: string
+          folio?: number
+          gastos_depositados?: number
+          id?: string
+          km_llegada?: number
+          km_recorridos?: number
+          km_salida?: number
+          liquidado_en?: string | null
+          litros_devueltos?: number
+          litros_teoricos?: number
+          observaciones?: string | null
+          operador_id: string
+          peso_categoria: string
+          placas?: string | null
+          precio_litro_ahorro?: number | null
+          precio_penalizacion?: number | null
+          rendimiento_aplicado?: number | null
+          rendimiento_real?: number
+          sueldo_final?: number
+          tipo_combustible: string
+          tipo_viaje: string
+          total_casetas?: number
+          total_combustible?: number
+          total_fletes?: number
+          total_gastos_extra?: number
+          total_litros?: number
+        }
+        Update: {
+          ajuste_rendimiento?: number
+          balance_efectivo?: number
+          camion_id?: string
+          comision_monto?: number
+          comision_porcentaje?: number | null
+          creado_en?: string
+          creado_por?: string
+          destino_estado?: string | null
+          efectivo_gastado?: number
+          empresa_carga?: string | null
+          estatus?: string
+          fecha?: string
+          folio?: number
+          gastos_depositados?: number
+          id?: string
+          km_llegada?: number
+          km_recorridos?: number
+          km_salida?: number
+          liquidado_en?: string | null
+          litros_devueltos?: number
+          litros_teoricos?: number
+          observaciones?: string | null
+          operador_id?: string
+          peso_categoria?: string
+          placas?: string | null
+          precio_litro_ahorro?: number | null
+          precio_penalizacion?: number | null
+          rendimiento_aplicado?: number | null
+          rendimiento_real?: number
+          sueldo_final?: number
+          tipo_combustible?: string
+          tipo_viaje?: string
+          total_casetas?: number
+          total_combustible?: number
+          total_fletes?: number
+          total_gastos_extra?: number
+          total_litros?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bitacora_viajes_camion_id_fkey"
+            columns: ["camion_id"]
+            isOneToOne: false
+            referencedRelation: "bitacora_camiones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bitacora_viajes_creado_por_fkey"
+            columns: ["creado_por"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bitacora_viajes_destino_estado_fkey"
+            columns: ["destino_estado"]
+            isOneToOne: false
+            referencedRelation: "bitacora_estados"
+            referencedColumns: ["nombre"]
+          },
+          {
+            foreignKeyName: "bitacora_viajes_operador_id_fkey"
+            columns: ["operador_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bitacora_viajes_peso_categoria_fkey"
             columns: ["peso_categoria"]
             isOneToOne: false
             referencedRelation: "bitacora_pesos"
