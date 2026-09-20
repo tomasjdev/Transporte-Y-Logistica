@@ -348,7 +348,9 @@ export default function CapturaViaje() {
       {error && <p style={{ color: 'crimson' }}>{error}</p>}
 
       <button disabled={saving} onClick={() => handleSave('borrador')}>Guardar borrador</button>
-      <button disabled={saving} onClick={() => handleSave('liquidado')}>Liquidar</button>
+      {(profile?.rol === 'gerencia' || profile?.rol === 'admin') && (
+        <button disabled={saving} onClick={() => handleSave('liquidado')}>Liquidar</button>
+      )}
     </div>
   )
 }
