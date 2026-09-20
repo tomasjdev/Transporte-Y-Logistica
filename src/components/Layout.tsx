@@ -3,9 +3,9 @@ import Sidebar from './Sidebar'
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <div style={{ display: 'flex' }}>
+    <div className="app-layout">
       <Sidebar />
-      <main style={{ flex: 1, padding: 24 }}>{children}</main>
+      <main className="main-content animate-fade-in">{children}</main>
     </div>
   )
 }

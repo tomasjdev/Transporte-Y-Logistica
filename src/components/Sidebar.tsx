@@ -5,16 +5,44 @@ export default function Sidebar() {
   const { profile, signOut } = useAuth()
 
   return (
-    <nav style={{ width: 220, padding: 16, background: '#1f2430', color: 'white', minHeight: '100vh' }}>
-      <p>{profile?.nombre}</p>
-      <NavLink to="/">Dashboard</NavLink>
-      <NavLink to="/bitacora">Bitácora</NavLink>
-      <NavLink to="/inventario">Inventario</NavLink>
-      <NavLink to="/inventario/movimientos">Movimientos</NavLink>
-      <NavLink to="/inventario/movimientos/nuevo">Nuevo movimiento</NavLink>
-      {profile?.rol === 'admin' && <NavLink to="/usuarios">Usuarios</NavLink>}
-      {profile?.rol === 'admin' && <NavLink to="/bitacora/catalogos">Catálogos</NavLink>}
-      <button onClick={signOut}>Cerrar sesión</button>
+    <nav className="sidebar">
+      <div className="sidebar-header">
+        <h2 className="sidebar-title">Trans&Logis</h2>
+        <p className="sidebar-user">{profile?.nombre}</p>
+      </div>
+
+      <div className="nav-links">
+        <NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} end>
+          Dashboard
+        </NavLink>
+        <NavLink to="/bitacora" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          Bitácora
+        </NavLink>
+        <NavLink to="/inventario" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} end>
+          Inventario
+        </NavLink>
+        <NavLink to="/inventario/movimientos" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} end>
+          Movimientos
+        </NavLink>
+        <NavLink to="/inventario/movimientos/nuevo" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          Nuevo movimiento
+        </NavLink>
+        
+        {profile?.rol === 'admin' && (
+          <>
+            <NavLink to="/usuarios" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              Usuarios
+            </NavLink>
+            <NavLink to="/bitacora/catalogos" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              Catálogos
+            </NavLink>
+          </>
+        )}
+      </div>
+
+      <button onClick={signOut} className="btn btn-ghost" style={{ marginTop: 'auto', width: '100%' }}>
+        Cerrar sesión
+      </button>
     </nav>
   )
 }

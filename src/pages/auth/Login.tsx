@@ -23,22 +23,56 @@ export default function Login() {
   }
 
   return (
-    <div style={{ display: 'grid', placeItems: 'center', height: '100vh' }}>
-      <form onSubmit={handleSubmit} style={{ width: 320, display: 'grid', gap: 12 }}>
-        <h1>Transporte y Logística</h1>
-        <label>
-          Correo
-          <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-        </label>
-        <label>
-          Contraseña
-          <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-        </label>
-        {error && <p style={{ color: 'crimson' }}>{error}</p>}
-        <button type="submit" disabled={submitting}>
-          {submitting ? 'Entrando…' : 'Entrar'}
-        </button>
-      </form>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '2.5rem' }}>
+        <div className="text-center" style={{ marginBottom: '2rem' }}>
+          <h1 style={{ 
+            background: 'linear-gradient(to right, #3b82f6, #8b5cf6)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            marginBottom: '0.5rem',
+            fontSize: '1.75rem'
+          }}>
+            Trans&Logis
+          </h1>
+          <p className="text-muted">Accede a tu plataforma de gestión</p>
+        </div>
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div className="form-group">
+            <label>Correo Electrónico</label>
+            <input 
+              type="email" 
+              className="input"
+              required 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              placeholder="tu@correo.com"
+            />
+          </div>
+          <div className="form-group">
+            <label>Contraseña</label>
+            <input 
+              type="password" 
+              className="input"
+              required 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              placeholder="••••••••"
+            />
+          </div>
+          
+          {error && (
+            <div style={{ padding: '0.75rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '6px', color: '#f87171', fontSize: '0.875rem' }}>
+              {error}
+            </div>
+          )}
+          
+          <button type="submit" className="btn btn-primary" disabled={submitting} style={{ marginTop: '1rem' }}>
+            {submitting ? 'Verificando...' : 'Iniciar Sesión'}
+          </button>
+        </form>
+      </div>
     </div>
   )
 }

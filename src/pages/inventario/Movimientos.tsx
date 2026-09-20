@@ -9,9 +9,11 @@ export default function Movimientos() {
   useEffect(() => { fetchMovimientos().then(setMovimientos) }, [])
 
   return (
-    <div>
-      <h1>Historial de movimientos</h1>
-      <Link to="/inventario/movimientos/nuevo">+ Nuevo movimiento</Link>
+    <div className="animate-fade-in">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <h1 style={{ margin: 0 }}>Historial de movimientos</h1>
+        <Link to="/inventario/movimientos/nuevo" className="btn btn-primary">+ Nuevo movimiento</Link>
+      </div>
       <table>
         <thead>
           <tr><th>Fecha</th><th>Tipo</th><th>Cantidad</th><th>Motivo</th></tr>
