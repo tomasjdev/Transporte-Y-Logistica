@@ -78,11 +78,17 @@ export async function fetchViaje(id: string): Promise<ViajeDetalle> {
   }
 }
 
+export function totalesDePayload(payload: ViajePayload) {
+  return {
+    totalFletes: payload.fletes.reduce((sum, f) => sum + f.monto, 0),
+    totalLitros: payload.recargas.reduce((sum, r) => sum + r.litros, 0),
+    totalCasetas: payload.casetas.reduce((sum, c) => sum + c.monto, 0),
+    totalGastosExtra: payload.gastos_extra.reduce((sum, g) => sum + g.monto, 0),
+  }
+}
+
 export async function previewLiquidacion(payload: ViajePayload): Promise<Liquidacion> {
-  const totalFletes = payload.fletes.reduce((sum, f) => sum + f.monto, 0)
-  const totalLitros = payload.recargas.reduce((sum, r) => sum + r.litros, 0)
-  const totalCasetas = payload.casetas.reduce((sum, c) => sum + c.monto, 0)
-  const totalGastosExtra = payload.gastos_extra.reduce((sum, g) => sum + g.monto, 0)
+  const { totalFletes, totalLitros, totalCasetas, totalGastosExtra } = totalesDePayload(payload)
 
   const { data: params, error: paramsError } = await supabase
     .rpc('obtener_parametros_liquidacion', {
