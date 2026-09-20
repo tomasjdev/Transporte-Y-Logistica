@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
 import Login from './pages/auth/Login'
+import Dashboard from './pages/Dashboard'
 import CapturaViaje from './pages/bitacora/CapturaViaje'
 import ListaViajes from './pages/bitacora/ListaViajes'
 import Boleta from './pages/bitacora/Boleta'
@@ -21,7 +22,7 @@ function App() {
           element={
             <ProtectedRoute>
               <Layout>
-                <div>Dashboard (pendiente)</div>
+                <Dashboard />
               </Layout>
             </ProtectedRoute>
           }
