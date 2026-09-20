@@ -6,6 +6,7 @@ import Login from './pages/auth/Login'
 import CapturaViaje from './pages/bitacora/CapturaViaje'
 import ListaViajes from './pages/bitacora/ListaViajes'
 import Boleta from './pages/bitacora/Boleta'
+import Catalogos from './pages/bitacora/Catalogos'
 
 function App() {
   return (
@@ -58,6 +59,16 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <CapturaViaje />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/bitacora/catalogos"
+          element={
+            <ProtectedRoute roles={['admin']}>
+              <Layout>
+                <Catalogos />
               </Layout>
             </ProtectedRoute>
           }
