@@ -14,6 +14,131 @@ export type Database = {
   }
   public: {
     Tables: {
+      bitacora_camiones: {
+        Row: {
+          activo: boolean
+          id: string
+          numero: number
+          placas: string | null
+        }
+        Insert: {
+          activo?: boolean
+          id?: string
+          numero: number
+          placas?: string | null
+        }
+        Update: {
+          activo?: boolean
+          id?: string
+          numero?: number
+          placas?: string | null
+        }
+        Relationships: []
+      }
+      bitacora_componentes: {
+        Row: {
+          id: string
+          nombre: string
+          orden: number
+        }
+        Insert: {
+          id?: string
+          nombre: string
+          orden: number
+        }
+        Update: {
+          id?: string
+          nombre?: string
+          orden?: number
+        }
+        Relationships: []
+      }
+      bitacora_config: {
+        Row: {
+          clave: string
+          descripcion: string | null
+          valor: number
+        }
+        Insert: {
+          clave: string
+          descripcion?: string | null
+          valor: number
+        }
+        Update: {
+          clave?: string
+          descripcion?: string | null
+          valor?: number
+        }
+        Relationships: []
+      }
+      bitacora_estados: {
+        Row: {
+          clave: string
+          id: string
+          nombre: string
+        }
+        Insert: {
+          clave: string
+          id?: string
+          nombre: string
+        }
+        Update: {
+          clave?: string
+          id?: string
+          nombre?: string
+        }
+        Relationships: []
+      }
+      bitacora_pesos: {
+        Row: {
+          categoria: string
+          comision_porcentaje: number
+          id: string
+          orden: number
+        }
+        Insert: {
+          categoria: string
+          comision_porcentaje: number
+          id?: string
+          orden: number
+        }
+        Update: {
+          categoria?: string
+          comision_porcentaje?: number
+          id?: string
+          orden?: number
+        }
+        Relationships: []
+      }
+      bitacora_rendimientos: {
+        Row: {
+          id: string
+          km_por_litro: number
+          peso_categoria: string
+          tipo_viaje: string
+        }
+        Insert: {
+          id?: string
+          km_por_litro: number
+          peso_categoria: string
+          tipo_viaje: string
+        }
+        Update: {
+          id?: string
+          km_por_litro?: number
+          peso_categoria?: string
+          tipo_viaje?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bitacora_rendimientos_peso_categoria_fkey"
+            columns: ["peso_categoria"]
+            isOneToOne: false
+            referencedRelation: "bitacora_pesos"
+            referencedColumns: ["categoria"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           activo: boolean
