@@ -1,4 +1,4 @@
--- supabase/migrations/20260920103500_inventario.sql
+-- supabase/migrations/20260920103511_inventario.sql
 
 create table public.inventario_productos (
   id uuid primary key default gen_random_uuid(),

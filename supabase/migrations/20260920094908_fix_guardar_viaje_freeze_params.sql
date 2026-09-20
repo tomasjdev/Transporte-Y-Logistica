@@ -1,4 +1,4 @@
--- supabase/migrations/20260920100700_fix_guardar_viaje_freeze_params.sql
+-- supabase/migrations/20260920094908_fix_guardar_viaje_freeze_params.sql
 --
 -- Fixes a bug in the Task 7 guardar_viaje freeze-rule branch. The original
 -- body assigned the frozen (already-liquidado) parameters into a `record`

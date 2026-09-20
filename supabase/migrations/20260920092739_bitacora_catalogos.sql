@@ -1,4 +1,4 @@
--- supabase/migrations/20260920100100_bitacora_catalogos.sql
+-- supabase/migrations/20260920092739_bitacora_catalogos.sql
 
 create table public.bitacora_camiones (
   id uuid primary key default gen_random_uuid(),

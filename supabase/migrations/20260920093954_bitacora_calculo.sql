@@ -1,4 +1,4 @@
--- supabase/migrations/20260920100400_bitacora_calculo.sql
+-- supabase/migrations/20260920093954_bitacora_calculo.sql
 
 create function public.obtener_parametros_liquidacion(
   p_peso_categoria text,

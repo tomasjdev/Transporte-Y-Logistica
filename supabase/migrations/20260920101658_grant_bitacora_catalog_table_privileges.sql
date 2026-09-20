@@ -1,4 +1,4 @@
--- supabase/migrations/20260920100900_grant_bitacora_catalog_table_privileges.sql
+-- supabase/migrations/20260920101658_grant_bitacora_catalog_table_privileges.sql
 --
 -- Task 8's fetchCatalogos() (src/lib/bitacora.ts) reads public.bitacora_camiones,
 -- bitacora_pesos, bitacora_estados, and bitacora_componentes directly via the

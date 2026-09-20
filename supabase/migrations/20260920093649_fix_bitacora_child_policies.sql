@@ -1,4 +1,4 @@
--- supabase/migrations/20260920100300_fix_bitacora_child_policies.sql
+-- supabase/migrations/20260920093649_fix_bitacora_child_policies.sql
 --
 -- Fixes a critical bug in the Task 5 child-table RLS policies. The original
 -- "for all" policies applied USING (ownership only, no estatus gate) to

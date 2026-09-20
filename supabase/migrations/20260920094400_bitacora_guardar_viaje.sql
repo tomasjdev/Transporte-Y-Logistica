@@ -1,4 +1,4 @@
--- supabase/migrations/20260920100500_bitacora_guardar_viaje.sql
+-- supabase/migrations/20260920094400_bitacora_guardar_viaje.sql
 
 create function public.guardar_viaje(p_viaje jsonb)
 returns uuid

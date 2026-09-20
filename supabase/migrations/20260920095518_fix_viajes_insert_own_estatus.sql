@@ -1,4 +1,4 @@
--- supabase/migrations/20260920100800_fix_viajes_insert_own_estatus.sql
+-- supabase/migrations/20260920095518_fix_viajes_insert_own_estatus.sql
 --
 -- Fixes a role-separation gap in Task 5's bitacora_viajes INSERT policy.
 -- The original viajes_insert_own WITH CHECK only verified ownership

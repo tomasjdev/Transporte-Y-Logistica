@@ -1,4 +1,4 @@
--- supabase/migrations/20260920104200_restrict_inventario_productos_update.sql
+-- supabase/migrations/20260920104016_restrict_inventario_productos_update.sql
 --
 -- Task 12 review found that the blanket
 -- `grant update on public.inventario_productos to authenticated` (from

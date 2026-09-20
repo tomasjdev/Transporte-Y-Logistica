@@ -1,4 +1,4 @@
--- supabase/migrations/20260920100600_grant_bitacora_table_privileges.sql
+-- supabase/migrations/20260920094530_grant_bitacora_table_privileges.sql
 --
 -- Task 5 created public.bitacora_viajes and its 5 child tables with RLS
 -- policies, but this project's default-privilege setup revokes all table
