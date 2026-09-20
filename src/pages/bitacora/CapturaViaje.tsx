@@ -335,13 +335,13 @@ export default function CapturaViaje() {
       {liquidacion && (
         <section>
           <h2>Liquidación (vista previa)</h2>
-          <p>Km recorridos: {liquidacion.km_recorridos}</p>
-          <p>Litros teóricos: {liquidacion.litros_teoricos.toFixed(2)}</p>
-          <p>Litros devueltos: {liquidacion.litros_devueltos}</p>
-          <p>Comisión: ${liquidacion.comision_monto.toFixed(2)}</p>
-          <p>Balance efectivo (Sobró): ${liquidacion.balance_efectivo.toFixed(2)}</p>
-          <p>Ajuste por rendimiento: ${liquidacion.ajuste_rendimiento.toFixed(2)}</p>
-          <p><strong>Sueldo final: ${liquidacion.sueldo_final.toFixed(2)}</strong></p>
+          <p>Km recorridos: {liquidacion.km_recorridos ?? 0}</p>
+          <p>Litros teóricos: {(liquidacion.litros_teoricos ?? 0).toFixed(2)}</p>
+          <p>Litros devueltos: {liquidacion.litros_devueltos ?? 0}</p>
+          <p>Comisión: ${(liquidacion.comision_monto ?? 0).toFixed(2)}</p>
+          <p>Balance efectivo (Sobró): ${(liquidacion.balance_efectivo ?? 0).toFixed(2)}</p>
+          <p>Ajuste por rendimiento: ${(liquidacion.ajuste_rendimiento ?? 0).toFixed(2)}</p>
+          <p><strong>Sueldo final: ${(liquidacion.sueldo_final ?? 0).toFixed(2)}</strong></p>
         </section>
       )}
 

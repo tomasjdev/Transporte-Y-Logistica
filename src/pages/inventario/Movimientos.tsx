@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { fetchMovimientos } from '../../lib/inventario'
 import type { Movimiento } from '../../types/inventario'
 
@@ -10,6 +11,7 @@ export default function Movimientos() {
   return (
     <div>
       <h1>Historial de movimientos</h1>
+      <Link to="/inventario/movimientos/nuevo">+ Nuevo movimiento</Link>
       <table>
         <thead>
           <tr><th>Fecha</th><th>Tipo</th><th>Cantidad</th><th>Motivo</th></tr>

@@ -7,6 +7,7 @@ export default function Productos() {
   const { profile } = useAuth()
   const [productos, setProductos] = useState<Producto[]>([])
   const [form, setForm] = useState({ codigo_interno: '', nombre: '', categoria: '', unidad_medida: '', stock_inicial: 0, stock_minimo: 0 })
+  const [error, setError] = useState<string | null>(null)
   const puedeCrear = profile?.rol === 'admin' || profile?.rol === 'gerencia'
 
   function reload() {
@@ -17,9 +18,14 @@ export default function Productos() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    await crearProducto(form)
-    setForm({ codigo_interno: '', nombre: '', categoria: '', unidad_medida: '', stock_inicial: 0, stock_minimo: 0 })
-    reload()
+    setError(null)
+    try {
+      await crearProducto(form)
+      setForm({ codigo_interno: '', nombre: '', categoria: '', unidad_medida: '', stock_inicial: 0, stock_minimo: 0 })
+      reload()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Error al crear el producto.')
+    }
   }
 
   return (
@@ -57,6 +63,7 @@ export default function Productos() {
             onChange={(e) => setForm({ ...form, stock_inicial: Number(e.target.value) })} />
           <input type="number" placeholder="Stock mínimo" value={form.stock_minimo}
             onChange={(e) => setForm({ ...form, stock_minimo: Number(e.target.value) })} />
+          {error && <p style={{ color: 'crimson' }}>{error}</p>}
           <button type="submit">Crear producto</button>
         </form>
       )}

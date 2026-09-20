@@ -15,6 +15,8 @@ export default function RegistroMovimiento() {
   const [form, setForm] = useState({
     producto_id: '', unidad_vehiculo_id: '', tipo_movimiento: esOperador ? 'salida' : 'entrada', cantidad: 0, motivo: '', observaciones: '',
   })
+  const [error, setError] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     fetchProductos().then(setProductos)
@@ -24,16 +26,24 @@ export default function RegistroMovimiento() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!profile) return
-    await crearMovimiento({
-      producto_id: form.producto_id,
-      unidad_vehiculo_id: form.unidad_vehiculo_id || null,
-      responsable_id: profile.id,
-      tipo_movimiento: form.tipo_movimiento as 'entrada' | 'salida',
-      cantidad: form.cantidad,
-      motivo: form.motivo,
-      observaciones: form.observaciones,
-    })
-    navigate('/inventario/movimientos')
+    setError(null)
+    setSaving(true)
+    try {
+      await crearMovimiento({
+        producto_id: form.producto_id,
+        unidad_vehiculo_id: form.unidad_vehiculo_id || null,
+        responsable_id: profile.id,
+        tipo_movimiento: form.tipo_movimiento as 'entrada' | 'salida',
+        cantidad: form.cantidad,
+        motivo: form.motivo,
+        observaciones: form.observaciones,
+      })
+      navigate('/inventario/movimientos')
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Error al registrar el movimiento.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -75,7 +85,8 @@ export default function RegistroMovimiento() {
         Observaciones
         <textarea value={form.observaciones} onChange={(e) => setForm({ ...form, observaciones: e.target.value })} />
       </label>
-      <button type="submit">Guardar</button>
+      {error && <p style={{ color: 'crimson' }}>{error}</p>}
+      <button type="submit" disabled={saving}>Guardar</button>
     </form>
   )
 }

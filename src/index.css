@@ -8,3 +8,17 @@ body {
   background: #f5f6f8;
   color: #1f2430;
 }
+
+/* Fix 10: Boleta is wrapped in <Layout> (sidebar nav + content), so
+   window.print() would otherwise print the sidebar and the "Imprimir"
+   button along with the payroll data. Sidebar.tsx's root element is a
+   <nav>; hide it and any <button> (the print trigger itself) when
+   printing. */
+@media print {
+  nav, button {
+    display: none;
+  }
+  body {
+    background: #fff;
+  }
+}

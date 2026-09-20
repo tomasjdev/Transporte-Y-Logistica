@@ -5,6 +5,7 @@ import type { Camion, Peso } from '../../types/bitacora'
 export default function Catalogos() {
   const [camiones, setCamiones] = useState<Camion[]>([])
   const [pesos, setPesos] = useState<Peso[]>([])
+  const [error, setError] = useState<string | null>(null)
 
   async function reload() {
     const [c, p] = await Promise.all([
@@ -18,18 +19,29 @@ export default function Catalogos() {
   useEffect(() => { reload() }, [])
 
   async function updatePlacas(id: string, placas: string) {
-    await supabase.from('bitacora_camiones').update({ placas }).eq('id', id)
+    setError(null)
+    const { error } = await supabase.from('bitacora_camiones').update({ placas }).eq('id', id)
+    if (error) {
+      setError(`No se pudieron guardar las placas: ${error.message}`)
+      return
+    }
     reload()
   }
 
   async function updateComision(id: string, comision_porcentaje: number) {
-    await supabase.from('bitacora_pesos').update({ comision_porcentaje }).eq('id', id)
+    setError(null)
+    const { error } = await supabase.from('bitacora_pesos').update({ comision_porcentaje }).eq('id', id)
+    if (error) {
+      setError(`No se pudo guardar la comisión: ${error.message}`)
+      return
+    }
     reload()
   }
 
   return (
     <div>
       <h1>Catálogos</h1>
+      {error && <p style={{ color: 'crimson' }}>{error}</p>}
       <section>
         <h2>Camiones</h2>
         <table>
