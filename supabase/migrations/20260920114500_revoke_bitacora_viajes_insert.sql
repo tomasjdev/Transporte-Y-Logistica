@@ -1,0 +1,13 @@
+-- supabase/migrations/20260920114500_revoke_bitacora_viajes_insert.sql
+--
+-- Residual gap from the final-review fix wave: the blanket table-level
+-- INSERT grant on bitacora_viajes was left in place covering every column,
+-- including the computed settlement columns (sueldo_final, comision_monto,
+-- balance_efectivo, ajuste_rendimiento), even though guardar_viaje (now
+-- SECURITY DEFINER) is the only legitimate write path and bypasses grants
+-- entirely for its own inserts. No frontend code inserts into
+-- bitacora_viajes directly (grep confirmed). Revoking INSERT entirely
+-- closes the direct-PostgREST-insert bypass without affecting the RPC path,
+-- exactly mirroring the SELECT-only grant already applied to the 5 child
+-- tables.
+revoke insert on public.bitacora_viajes from authenticated;

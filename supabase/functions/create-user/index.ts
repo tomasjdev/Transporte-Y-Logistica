@@ -39,11 +39,16 @@ Deno.serve(async (req: Request) => {
 
   const { data: profile } = await callerClient
     .from("profiles")
-    .select("rol")
+    .select("rol, activo")
     .eq("id", userData.user.id)
     .single()
 
-  if (profile?.rol !== "admin") {
+  // Route the admin check through the same "rol AND activo" rule that
+  // private.current_user_role() enforces for every RLS policy — a
+  // deactivated admin's own row still says rol='admin', so checking rol
+  // alone (as this function did before) let a deactivated admin keep
+  // minting new admin accounts indefinitely.
+  if (profile?.rol !== "admin" || !profile?.activo) {
     return new Response(JSON.stringify({ error: "Solo un administrador puede crear usuarios" }), {
       status: 403,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
