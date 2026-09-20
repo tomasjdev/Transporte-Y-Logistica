@@ -7,6 +7,7 @@ import CapturaViaje from './pages/bitacora/CapturaViaje'
 import ListaViajes from './pages/bitacora/ListaViajes'
 import Boleta from './pages/bitacora/Boleta'
 import Catalogos from './pages/bitacora/Catalogos'
+import Productos from './pages/inventario/Productos'
 
 function App() {
   return (
@@ -69,6 +70,16 @@ function App() {
             <ProtectedRoute roles={['admin']}>
               <Layout>
                 <Catalogos />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/inventario"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Productos />
               </Layout>
             </ProtectedRoute>
           }
