@@ -1,4 +1,4 @@
--- supabase/migrations/20260920100000_foundation_roles_profiles.sql
+-- supabase/migrations/20260920090848_foundation_roles_profiles.sql
 
 create schema if not exists private;
 
@@ -67,11 +67,3 @@ $$;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
-
--- Restrict direct RPC invocation of the trigger function; it should only
--- run via the on_auth_user_created trigger, not be callable as a public API
--- (flagged by Supabase security advisors as a SECURITY DEFINER function
--- exposed to anon/authenticated via PostgREST RPC).
-revoke execute on function public.handle_new_user() from public;
-revoke execute on function public.handle_new_user() from anon;
-revoke execute on function public.handle_new_user() from authenticated;
