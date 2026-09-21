@@ -13,10 +13,10 @@ export async function crearProducto(input: NuevoProducto) {
   return data as Producto
 }
 
-export async function fetchMovimientos(filtros: { productoId?: string; unidadId?: string } = {}) {
+export async function fetchMovimientos(filtros: { productoId?: string; marcaVehiculo?: string } = {}) {
   let query = supabase.from('inventario_movimientos').select('*').order('creado_en', { ascending: false })
   if (filtros.productoId) query = query.eq('producto_id', filtros.productoId)
-  if (filtros.unidadId) query = query.eq('unidad_vehiculo_id', filtros.unidadId)
+  if (filtros.marcaVehiculo) query = query.eq('marca_vehiculo', filtros.marcaVehiculo)
   const { data, error } = await query
   if (error) throw error
   return data as Movimiento[]

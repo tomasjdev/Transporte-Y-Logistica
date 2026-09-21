@@ -16,13 +16,14 @@ export default function Movimientos() {
       </div>
       <table>
         <thead>
-          <tr><th>Fecha</th><th>Tipo</th><th>Cantidad</th><th>Motivo</th></tr>
+          <tr><th>Fecha</th><th>Tipo</th><th>Marca</th><th>Cantidad</th><th>Motivo</th></tr>
         </thead>
         <tbody>
           {movimientos.map((m) => (
             <tr key={m.id}>
               <td>{new Date(m.creado_en).toLocaleString()}</td>
               <td>{m.tipo_movimiento}</td>
+              <td>{m.marca_vehiculo ?? 'N/A'}</td>
               <td>{m.cantidad}</td>
               <td>{m.motivo}</td>
             </tr>

@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { crearProducto, fetchProductos } from '../../lib/inventario'
-import type { Producto } from '../../types/inventario'
+import { MARCAS_VEHICULO, type MarcaVehiculo, type Producto } from '../../types/inventario'
 
 function badgeClass(estado: Producto['estado']) {
   if (estado === 'Agotado') return 'badge badge-danger'
@@ -12,7 +12,9 @@ function badgeClass(estado: Producto['estado']) {
 export default function Productos() {
   const { profile } = useAuth()
   const [productos, setProductos] = useState<Producto[]>([])
-  const [form, setForm] = useState({ codigo_interno: '', nombre: '', categoria: '', unidad_medida: '', stock_inicial: 0, stock_minimo: 0 })
+  const [form, setForm] = useState({
+    codigo_interno: '', nombre: '', categoria: '', marca_vehiculo: MARCAS_VEHICULO[0] as MarcaVehiculo, stock_inicial: 0, stock_minimo: 0,
+  })
   const [error, setError] = useState<string | null>(null)
   const puedeCrear = profile?.rol === 'admin' || profile?.rol === 'gerencia'
 
@@ -27,7 +29,7 @@ export default function Productos() {
     setError(null)
     try {
       await crearProducto(form)
-      setForm({ codigo_interno: '', nombre: '', categoria: '', unidad_medida: '', stock_inicial: 0, stock_minimo: 0 })
+      setForm({ codigo_interno: '', nombre: '', categoria: '', marca_vehiculo: MARCAS_VEHICULO[0], stock_inicial: 0, stock_minimo: 0 })
       reload()
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Error al crear el producto.')
@@ -44,16 +46,17 @@ export default function Productos() {
       <section className="card" style={{ marginBottom: '1.5rem' }}>
         <table>
           <thead>
-            <tr><th>Código</th><th>Nombre</th><th>Stock actual</th><th>Mínimo</th><th>Estado</th></tr>
+            <tr><th>Código</th><th>Nombre</th><th>Marca</th><th>Stock actual</th><th>Mínimo</th><th>Estado</th></tr>
           </thead>
           <tbody>
             {productos.length === 0 ? (
-              <tr><td colSpan={5} className="text-muted">No hay productos registrados todavía.</td></tr>
+              <tr><td colSpan={6} className="text-muted">No hay productos registrados todavía.</td></tr>
             ) : (
               productos.map((p) => (
                 <tr key={p.id}>
                   <td>{p.codigo_interno}</td>
                   <td>{p.nombre}</td>
+                  <td>{p.marca_vehiculo}</td>
                   <td>{p.stock_actual}</td>
                   <td>{p.stock_minimo}</td>
                   <td><span className={badgeClass(p.estado)}>{p.estado}</span></td>
@@ -85,9 +88,11 @@ export default function Productos() {
                   onChange={(e) => setForm({ ...form, categoria: e.target.value })} />
               </div>
               <div className="field">
-                <label>Unidad de medida</label>
-                <input className="input" required value={form.unidad_medida}
-                  onChange={(e) => setForm({ ...form, unidad_medida: e.target.value })} />
+                <label>Marca de vehículo</label>
+                <select className="input" value={form.marca_vehiculo}
+                  onChange={(e) => setForm({ ...form, marca_vehiculo: e.target.value as MarcaVehiculo })}>
+                  {MARCAS_VEHICULO.map((m) => <option key={m} value={m}>{m}</option>)}
+                </select>
               </div>
               <div className="field">
                 <label>Stock inicial</label>

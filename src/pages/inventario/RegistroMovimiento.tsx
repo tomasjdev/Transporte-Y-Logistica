@@ -1,26 +1,22 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
-import { fetchCatalogos } from '../../lib/bitacora'
 import { crearMovimiento, fetchProductos } from '../../lib/inventario'
-import type { Camion } from '../../types/bitacora'
-import type { Producto } from '../../types/inventario'
+import { MARCAS_VEHICULO, type MarcaVehiculo, type Producto } from '../../types/inventario'
 
 export default function RegistroMovimiento() {
   const { profile } = useAuth()
   const navigate = useNavigate()
   const [productos, setProductos] = useState<Producto[]>([])
-  const [camiones, setCamiones] = useState<Camion[]>([])
   const esOperador = profile?.rol === 'operador'
   const [form, setForm] = useState({
-    producto_id: '', unidad_vehiculo_id: '', tipo_movimiento: esOperador ? 'salida' : 'entrada', cantidad: 0, motivo: '', observaciones: '',
+    producto_id: '', marca_vehiculo: '', tipo_movimiento: esOperador ? 'salida' : 'entrada', cantidad: 0, motivo: '', observaciones: '',
   })
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     fetchProductos().then(setProductos)
-    fetchCatalogos().then((c) => setCamiones(c.camiones))
   }, [])
 
   async function handleSubmit(e: FormEvent) {
@@ -31,7 +27,7 @@ export default function RegistroMovimiento() {
     try {
       await crearMovimiento({
         producto_id: form.producto_id,
-        unidad_vehiculo_id: form.unidad_vehiculo_id || null,
+        marca_vehiculo: (form.marca_vehiculo || null) as MarcaVehiculo | null,
         responsable_id: profile.id,
         tipo_movimiento: form.tipo_movimiento as 'entrada' | 'salida',
         cantidad: form.cantidad,
@@ -63,10 +59,10 @@ export default function RegistroMovimiento() {
             </select>
           </div>
           <div className="field">
-            <label>Unidad / Vehículo</label>
-            <select className="input" value={form.unidad_vehiculo_id} onChange={(e) => setForm({ ...form, unidad_vehiculo_id: e.target.value })}>
+            <label>Marca de vehículo</label>
+            <select className="input" value={form.marca_vehiculo} onChange={(e) => setForm({ ...form, marca_vehiculo: e.target.value })}>
               <option value="">N/A</option>
-              {camiones.map((c) => <option key={c.id} value={c.id}>{c.numero} — {c.placas}</option>)}
+              {MARCAS_VEHICULO.map((m) => <option key={m} value={m}>{m}</option>)}
             </select>
           </div>
           {!esOperador && (

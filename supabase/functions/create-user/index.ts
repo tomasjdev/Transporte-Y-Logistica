@@ -72,6 +72,7 @@ Deno.serve(async (req: Request) => {
   })
 
   if (createError) {
+    console.error("createUser failed:", JSON.stringify(createError))
     return new Response(JSON.stringify({ error: createError.message }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -86,6 +87,7 @@ Deno.serve(async (req: Request) => {
   // profile row) exists.
   const { error: roleError } = await adminClient.from("profiles").update({ rol }).eq("id", created.user.id)
   if (roleError) {
+    console.error("profiles role update failed:", JSON.stringify(roleError))
     return new Response(JSON.stringify({ error: roleError.message }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

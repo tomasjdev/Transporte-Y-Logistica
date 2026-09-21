@@ -12,22 +12,35 @@ export default function UserManagement() {
   const [error, setError] = useState<string | null>(null)
   const [rowError, setRowError] = useState<string | null>(null)
 
-  function reload() {
-    supabase.from('profiles').select('*').order('nombre').then(({ data }) => setProfiles(data ?? []))
+  async function reload() {
+    const { data } = await supabase.from('profiles').select('*').order('nombre')
+    setProfiles(data ?? [])
+    return data ?? []
   }
 
-  useEffect(reload, [])
+  useEffect(() => { reload() }, [])
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError(null)
-    const { error: fnError } = await supabase.functions.invoke('create-user', { body: form })
+    const { data: fnData, error: fnError } = await supabase.functions.invoke('create-user', { body: form })
     if (fnError) {
       setError('No se pudo crear el usuario. Verifica los datos.')
       return
     }
     setForm({ email: '', password: '', nombre: '', rol: 'operador' })
-    reload()
+
+    // The new profile is created inline by handle_new_user() and then
+    // patched with the chosen rol before the edge function responds, so it
+    // should already be visible here — but poll briefly (a few hundred ms)
+    // in case of any propagation lag, instead of leaving the admin staring
+    // at a list that looks like the creation silently did nothing.
+    const newId = (fnData as { id?: string } | null)?.id
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const current = await reload()
+      if (!newId || current.some((p) => p.id === newId)) break
+      await new Promise((resolve) => setTimeout(resolve, 400))
+    }
   }
 
   async function updateRol(id: string, rol: Profile['rol']) {

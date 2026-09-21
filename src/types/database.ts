@@ -454,34 +454,34 @@ export type Database = {
           cantidad: number
           creado_en: string
           id: string
+          marca_vehiculo: string | null
           motivo: string | null
           observaciones: string | null
           producto_id: string
           responsable_id: string
           tipo_movimiento: string
-          unidad_vehiculo_id: string | null
         }
         Insert: {
           cantidad: number
           creado_en?: string
           id?: string
+          marca_vehiculo?: string | null
           motivo?: string | null
           observaciones?: string | null
           producto_id: string
           responsable_id: string
           tipo_movimiento: string
-          unidad_vehiculo_id?: string | null
         }
         Update: {
           cantidad?: number
           creado_en?: string
           id?: string
+          marca_vehiculo?: string | null
           motivo?: string | null
           observaciones?: string | null
           producto_id?: string
           responsable_id?: string
           tipo_movimiento?: string
-          unidad_vehiculo_id?: string | null
         }
         Relationships: [
           {
@@ -498,13 +498,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "inventario_movimientos_unidad_vehiculo_id_fkey"
-            columns: ["unidad_vehiculo_id"]
-            isOneToOne: false
-            referencedRelation: "bitacora_camiones"
-            referencedColumns: ["id"]
-          },
         ]
       }
       inventario_productos: {
@@ -515,11 +508,11 @@ export type Database = {
           creado_en: string
           estado: string
           id: string
+          marca_vehiculo: string
           nombre: string
           stock_actual: number
           stock_inicial: number
           stock_minimo: number
-          unidad_medida: string
         }
         Insert: {
           activo?: boolean
@@ -528,11 +521,11 @@ export type Database = {
           creado_en?: string
           estado?: string
           id?: string
+          marca_vehiculo: string
           nombre: string
           stock_actual?: number
           stock_inicial?: number
           stock_minimo?: number
-          unidad_medida: string
         }
         Update: {
           activo?: boolean
@@ -541,11 +534,11 @@ export type Database = {
           creado_en?: string
           estado?: string
           id?: string
+          marca_vehiculo?: string
           nombre?: string
           stock_actual?: number
           stock_inicial?: number
           stock_minimo?: number
-          unidad_medida?: string
         }
         Relationships: []
       }

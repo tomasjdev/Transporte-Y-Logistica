@@ -38,14 +38,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => listener.subscription.unsubscribe()
   }, [])
 
+  // Supabase's client silently refreshes the access token whenever the tab
+  // regains focus/visibility, which fires onAuthStateChange with a new
+  // (but same-user) session object. That used to re-run the profile-fetch
+  // effect below on every session change, flip `loading` back to true, and
+  // make ProtectedRoute unmount/remount every page — including any form
+  // the user had open — wiping out whatever they'd typed. Keying the
+  // effect on the user id (not the whole session object) and skipping the
+  // refetch when we already have that user's profile means a token
+  // refresh no longer touches `loading` or `profile` at all.
+  const userId = session?.user.id
+
   useEffect(() => {
-    if (!session) return
+    if (!userId) return
+    if (profile?.id === userId) return
     setLoading(true)
     setAuthError(null)
     supabase
       .from('profiles')
       .select('*')
-      .eq('id', session.user.id)
+      .eq('id', userId)
       .single()
       .then(({ data, error }) => {
         if (error) {
@@ -63,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setProfile(data)
         setLoading(false)
       })
-  }, [session])
+  }, [userId, profile])
 
   async function signOut() {
     await supabase.auth.signOut()

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import type { Camion, Peso } from '../../types/bitacora'
 
@@ -6,6 +6,8 @@ export default function Catalogos() {
   const [camiones, setCamiones] = useState<Camion[]>([])
   const [pesos, setPesos] = useState<Peso[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [savedId, setSavedId] = useState<string | null>(null)
+  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   async function reload() {
     const [c, p] = await Promise.all([
@@ -18,6 +20,12 @@ export default function Catalogos() {
 
   useEffect(() => { reload() }, [])
 
+  function flashSaved(id: string) {
+    setSavedId(id)
+    if (savedTimer.current) clearTimeout(savedTimer.current)
+    savedTimer.current = setTimeout(() => setSavedId(null), 1500)
+  }
+
   async function updatePlacas(id: string, placas: string) {
     setError(null)
     const { error } = await supabase.from('bitacora_camiones').update({ placas }).eq('id', id)
@@ -25,6 +33,7 @@ export default function Catalogos() {
       setError(`No se pudieron guardar las placas: ${error.message}`)
       return
     }
+    flashSaved(id)
     reload()
   }
 
@@ -35,6 +44,7 @@ export default function Catalogos() {
       setError(`No se pudo guardar la comisión: ${error.message}`)
       return
     }
+    flashSaved(id)
     reload()
   }
 
@@ -50,9 +60,12 @@ export default function Catalogos() {
       <div className="grid md:grid-cols-2 gap-6">
         <section className="card">
           <h2 className="form-section-title">Camiones</h2>
+          <p className="text-muted" style={{ fontSize: '0.8rem', marginBottom: '0.75rem' }}>
+            Los campos son editables: escribe y haz clic afuera para guardar.
+          </p>
           <table>
             <thead>
-              <tr><th>#</th><th>Placas</th></tr>
+              <tr><th>#</th><th>Placas</th><th></th></tr>
             </thead>
             <tbody>
               {camiones.map((c) => (
@@ -66,6 +79,9 @@ export default function Catalogos() {
                       onBlur={(e) => updatePlacas(c.id, e.target.value)}
                     />
                   </td>
+                  <td style={{ width: 90 }}>
+                    {savedId === c.id && <span className="badge badge-success">Guardado</span>}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -74,9 +90,12 @@ export default function Catalogos() {
 
         <section className="card">
           <h2 className="form-section-title">Comisión por peso</h2>
+          <p className="text-muted" style={{ fontSize: '0.8rem', marginBottom: '0.75rem' }}>
+            Los campos son editables: escribe y haz clic afuera para guardar.
+          </p>
           <table>
             <thead>
-              <tr><th>Categoría</th><th>Comisión</th></tr>
+              <tr><th>Categoría</th><th>Comisión</th><th></th></tr>
             </thead>
             <tbody>
               {pesos.map((p) => (
@@ -90,6 +109,9 @@ export default function Catalogos() {
                       defaultValue={p.comision_porcentaje}
                       onBlur={(e) => updateComision(p.id, Number(e.target.value))}
                     />
+                  </td>
+                  <td style={{ width: 90 }}>
+                    {savedId === p.id && <span className="badge badge-success">Guardado</span>}
                   </td>
                 </tr>
               ))}
