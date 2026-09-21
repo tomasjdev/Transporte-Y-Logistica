@@ -21,13 +21,7 @@ export default function Sidebar() {
         <NavLink to="/inventario" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} end>
           Inventario
         </NavLink>
-        <NavLink to="/inventario/movimientos" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} end>
-          Movimientos
-        </NavLink>
-        <NavLink to="/inventario/movimientos/nuevo" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-          Nuevo movimiento
-        </NavLink>
-        
+
         {profile?.rol === 'admin' && (
           <>
             <NavLink to="/usuarios" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>

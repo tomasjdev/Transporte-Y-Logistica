@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
-import { crearProducto, fetchProductos } from '../../lib/inventario'
-import { MARCAS_VEHICULO, type MarcaVehiculo, type Producto } from '../../types/inventario'
+import { crearMovimiento, crearProducto, fetchMovimientos, fetchProductos } from '../../lib/inventario'
+import { MARCAS_VEHICULO, type MarcaVehiculo, type Movimiento, type Producto } from '../../types/inventario'
 
 function badgeClass(estado: Producto['estado']) {
   if (estado === 'Agotado') return 'badge badge-danger'
@@ -12,38 +12,190 @@ function badgeClass(estado: Producto['estado']) {
 export default function Productos() {
   const { profile } = useAuth()
   const [productos, setProductos] = useState<Producto[]>([])
-  const [form, setForm] = useState({
+  const [movimientos, setMovimientos] = useState<Movimiento[]>([])
+  const puedeCrear = profile?.rol === 'admin' || profile?.rol === 'gerencia'
+  const esOperador = profile?.rol === 'operador'
+
+  const [productoForm, setProductoForm] = useState({
     codigo_interno: '', nombre: '', categoria: '', marca_vehiculo: MARCAS_VEHICULO[0] as MarcaVehiculo, stock_inicial: 0, stock_minimo: 0,
   })
-  const [error, setError] = useState<string | null>(null)
-  const puedeCrear = profile?.rol === 'admin' || profile?.rol === 'gerencia'
+  const [productoError, setProductoError] = useState<string | null>(null)
 
-  function reload() {
+  const [movimientoForm, setMovimientoForm] = useState({
+    producto_id: '', marca_vehiculo: '', tipo_movimiento: esOperador ? 'salida' : 'entrada', cantidad: 0, motivo: '', observaciones: '',
+  })
+  const [movimientoError, setMovimientoError] = useState<string | null>(null)
+  const [savingMovimiento, setSavingMovimiento] = useState(false)
+
+  function reloadProductos() {
     fetchProductos().then(setProductos)
   }
 
-  useEffect(reload, [])
+  function reloadMovimientos() {
+    fetchMovimientos().then(setMovimientos)
+  }
 
-  async function handleSubmit(e: FormEvent) {
+  useEffect(() => {
+    reloadProductos()
+    reloadMovimientos()
+  }, [])
+
+  async function handleCrearProducto(e: FormEvent) {
     e.preventDefault()
-    setError(null)
+    setProductoError(null)
     try {
-      await crearProducto(form)
-      setForm({ codigo_interno: '', nombre: '', categoria: '', marca_vehiculo: MARCAS_VEHICULO[0], stock_inicial: 0, stock_minimo: 0 })
-      reload()
+      await crearProducto(productoForm)
+      setProductoForm({ codigo_interno: '', nombre: '', categoria: '', marca_vehiculo: MARCAS_VEHICULO[0], stock_inicial: 0, stock_minimo: 0 })
+      reloadProductos()
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Error al crear el producto.')
+      setProductoError(e instanceof Error ? e.message : 'Error al crear el producto.')
+    }
+  }
+
+  async function handleCrearMovimiento(e: FormEvent) {
+    e.preventDefault()
+    if (!profile) return
+    setMovimientoError(null)
+    setSavingMovimiento(true)
+    try {
+      await crearMovimiento({
+        producto_id: movimientoForm.producto_id,
+        marca_vehiculo: (movimientoForm.marca_vehiculo || null) as MarcaVehiculo | null,
+        responsable_id: profile.id,
+        tipo_movimiento: movimientoForm.tipo_movimiento as 'entrada' | 'salida',
+        cantidad: movimientoForm.cantidad,
+        motivo: movimientoForm.motivo,
+        observaciones: movimientoForm.observaciones,
+      })
+      setMovimientoForm({
+        producto_id: '', marca_vehiculo: '', tipo_movimiento: esOperador ? 'salida' : 'entrada', cantidad: 0, motivo: '', observaciones: '',
+      })
+      reloadProductos()
+      reloadMovimientos()
+    } catch (e) {
+      setMovimientoError(e instanceof Error ? e.message : 'Error al registrar el movimiento.')
+    } finally {
+      setSavingMovimiento(false)
     }
   }
 
   return (
     <div className="animate-fade-in">
       <div style={{ marginBottom: '1.5rem' }}>
-        <h1 style={{ marginBottom: '0.25rem' }}>Inventario — Productos</h1>
-        <p className="text-muted">Existencias y estado de stock de cada producto</p>
+        <h1 style={{ marginBottom: '0.25rem' }}>Inventario</h1>
+        <p className="text-muted">Productos, existencias y movimientos de entrada / salida</p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6" style={{ marginBottom: '1.5rem' }}>
+        {puedeCrear && (
+          <section className="card form-section">
+            <h2 className="form-section-title">Nuevo producto</h2>
+            <form onSubmit={handleCrearProducto}>
+              <div className="field-grid">
+                <div className="field">
+                  <label>Código interno</label>
+                  <input className="input" required value={productoForm.codigo_interno}
+                    onChange={(e) => setProductoForm({ ...productoForm, codigo_interno: e.target.value })} />
+                </div>
+                <div className="field">
+                  <label>Nombre</label>
+                  <input className="input" required value={productoForm.nombre}
+                    onChange={(e) => setProductoForm({ ...productoForm, nombre: e.target.value })} />
+                </div>
+                <div className="field">
+                  <label>Categoría</label>
+                  <input className="input" value={productoForm.categoria}
+                    onChange={(e) => setProductoForm({ ...productoForm, categoria: e.target.value })} />
+                </div>
+                <div className="field">
+                  <label>Marca de vehículo</label>
+                  <select className="input" value={productoForm.marca_vehiculo}
+                    onChange={(e) => setProductoForm({ ...productoForm, marca_vehiculo: e.target.value as MarcaVehiculo })}>
+                    {MARCAS_VEHICULO.map((m) => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                </div>
+                <div className="field">
+                  <label>Stock inicial</label>
+                  <input className="input" type="number" value={productoForm.stock_inicial}
+                    onChange={(e) => setProductoForm({ ...productoForm, stock_inicial: Number(e.target.value) })} />
+                </div>
+                <div className="field">
+                  <label>Stock mínimo</label>
+                  <input className="input" type="number" value={productoForm.stock_minimo}
+                    onChange={(e) => setProductoForm({ ...productoForm, stock_minimo: Number(e.target.value) })} />
+                </div>
+              </div>
+
+              {productoError && <div className="error-banner" style={{ marginTop: '1rem' }}>{productoError}</div>}
+
+              <div className="form-actions">
+                <button type="submit" className="btn btn-primary">Crear producto</button>
+              </div>
+            </form>
+          </section>
+        )}
+
+        <section className="card form-section">
+          <h2 className="form-section-title">Registrar movimiento</h2>
+          <form onSubmit={handleCrearMovimiento}>
+            <div className="field-grid">
+              <div className="field">
+                <label>Producto</label>
+                <select className="input" required value={movimientoForm.producto_id}
+                  onChange={(e) => setMovimientoForm({ ...movimientoForm, producto_id: e.target.value })}>
+                  <option value="">Selecciona…</option>
+                  {productos.map((p) => <option key={p.id} value={p.id}>{p.codigo_interno} — {p.nombre}</option>)}
+                </select>
+              </div>
+              <div className="field">
+                <label>Marca de vehículo</label>
+                <select className="input" value={movimientoForm.marca_vehiculo}
+                  onChange={(e) => setMovimientoForm({ ...movimientoForm, marca_vehiculo: e.target.value })}>
+                  <option value="">N/A</option>
+                  {MARCAS_VEHICULO.map((m) => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+              {!esOperador && (
+                <div className="field">
+                  <label>Tipo</label>
+                  <select className="input" value={movimientoForm.tipo_movimiento}
+                    onChange={(e) => setMovimientoForm({ ...movimientoForm, tipo_movimiento: e.target.value })}>
+                    <option value="entrada">Entrada</option>
+                    <option value="salida">Salida</option>
+                  </select>
+                </div>
+              )}
+              <div className="field">
+                <label>Cantidad</label>
+                <input className="input" type="number" required min={0.01} step="0.01" value={movimientoForm.cantidad}
+                  onChange={(e) => setMovimientoForm({ ...movimientoForm, cantidad: Number(e.target.value) })} />
+              </div>
+              <div className="field">
+                <label>Motivo</label>
+                <input className="input" value={movimientoForm.motivo}
+                  onChange={(e) => setMovimientoForm({ ...movimientoForm, motivo: e.target.value })} />
+              </div>
+            </div>
+
+            <div className="field" style={{ marginTop: '1rem' }}>
+              <label>Observaciones</label>
+              <textarea className="input" value={movimientoForm.observaciones}
+                onChange={(e) => setMovimientoForm({ ...movimientoForm, observaciones: e.target.value })} />
+            </div>
+
+            {movimientoError && <div className="error-banner" style={{ marginTop: '1rem' }}>{movimientoError}</div>}
+
+            <div className="form-actions">
+              <button type="submit" className="btn btn-primary" disabled={savingMovimiento}>
+                {savingMovimiento ? 'Guardando…' : 'Guardar'}
+              </button>
+            </div>
+          </form>
+        </section>
       </div>
 
       <section className="card" style={{ marginBottom: '1.5rem' }}>
+        <h2 className="form-section-title">Productos</h2>
         <table>
           <thead>
             <tr><th>Código</th><th>Nombre</th><th>Marca</th><th>Stock actual</th><th>Mínimo</th><th>Estado</th></tr>
@@ -67,53 +219,29 @@ export default function Productos() {
         </table>
       </section>
 
-      {puedeCrear && (
-        <section className="card form-section" style={{ maxWidth: 640 }}>
-          <h2 className="form-section-title">Nuevo producto</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="field-grid">
-              <div className="field">
-                <label>Código interno</label>
-                <input className="input" required value={form.codigo_interno}
-                  onChange={(e) => setForm({ ...form, codigo_interno: e.target.value })} />
-              </div>
-              <div className="field">
-                <label>Nombre</label>
-                <input className="input" required value={form.nombre}
-                  onChange={(e) => setForm({ ...form, nombre: e.target.value })} />
-              </div>
-              <div className="field">
-                <label>Categoría</label>
-                <input className="input" value={form.categoria}
-                  onChange={(e) => setForm({ ...form, categoria: e.target.value })} />
-              </div>
-              <div className="field">
-                <label>Marca de vehículo</label>
-                <select className="input" value={form.marca_vehiculo}
-                  onChange={(e) => setForm({ ...form, marca_vehiculo: e.target.value as MarcaVehiculo })}>
-                  {MARCAS_VEHICULO.map((m) => <option key={m} value={m}>{m}</option>)}
-                </select>
-              </div>
-              <div className="field">
-                <label>Stock inicial</label>
-                <input className="input" type="number" value={form.stock_inicial}
-                  onChange={(e) => setForm({ ...form, stock_inicial: Number(e.target.value) })} />
-              </div>
-              <div className="field">
-                <label>Stock mínimo</label>
-                <input className="input" type="number" value={form.stock_minimo}
-                  onChange={(e) => setForm({ ...form, stock_minimo: Number(e.target.value) })} />
-              </div>
-            </div>
-
-            {error && <div className="error-banner" style={{ marginTop: '1rem' }}>{error}</div>}
-
-            <div className="form-actions">
-              <button type="submit" className="btn btn-primary">Crear producto</button>
-            </div>
-          </form>
-        </section>
-      )}
+      <section className="card">
+        <h2 className="form-section-title">Historial de movimientos</h2>
+        <table>
+          <thead>
+            <tr><th>Fecha</th><th>Tipo</th><th>Marca</th><th>Cantidad</th><th>Motivo</th></tr>
+          </thead>
+          <tbody>
+            {movimientos.length === 0 ? (
+              <tr><td colSpan={5} className="text-muted">No hay movimientos registrados todavía.</td></tr>
+            ) : (
+              movimientos.map((m) => (
+                <tr key={m.id}>
+                  <td>{new Date(m.creado_en).toLocaleString()}</td>
+                  <td>{m.tipo_movimiento}</td>
+                  <td>{m.marca_vehiculo ?? 'N/A'}</td>
+                  <td>{m.cantidad}</td>
+                  <td>{m.motivo}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </section>
     </div>
   )
 }

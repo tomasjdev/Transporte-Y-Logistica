@@ -9,8 +9,6 @@ import ListaViajes from './pages/bitacora/ListaViajes'
 import Boleta from './pages/bitacora/Boleta'
 import Catalogos from './pages/bitacora/Catalogos'
 import Productos from './pages/inventario/Productos'
-import RegistroMovimiento from './pages/inventario/RegistroMovimiento'
-import Movimientos from './pages/inventario/Movimientos'
 import UserManagement from './pages/UserManagement'
 
 function App() {
@@ -84,26 +82,6 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <Productos />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/inventario/movimientos/nuevo"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <RegistroMovimiento />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/inventario/movimientos"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <Movimientos />
               </Layout>
             </ProtectedRoute>
           }
