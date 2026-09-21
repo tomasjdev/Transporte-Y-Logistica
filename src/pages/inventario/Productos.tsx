@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
-import { crearMovimiento, crearProducto, fetchMovimientos, fetchProductos } from '../../lib/inventario'
+import { crearMovimiento, crearProducto, eliminarMovimiento, eliminarProducto, fetchMovimientos, fetchProductos } from '../../lib/inventario'
 import { MARCAS_VEHICULO, type MarcaVehiculo, type Movimiento, type Producto } from '../../types/inventario'
 
 function badgeClass(estado: Producto['estado']) {
@@ -26,6 +26,7 @@ export default function Productos() {
   })
   const [movimientoError, setMovimientoError] = useState<string | null>(null)
   const [savingMovimiento, setSavingMovimiento] = useState(false)
+  const [listaError, setListaError] = useState<string | null>(null)
 
   function reloadProductos() {
     fetchProductos().then(setProductos)
@@ -76,6 +77,31 @@ export default function Productos() {
       setMovimientoError(e instanceof Error ? e.message : 'Error al registrar el movimiento.')
     } finally {
       setSavingMovimiento(false)
+    }
+  }
+
+  async function handleEliminarProducto(p: Producto) {
+    setListaError(null)
+    const confirmed = window.confirm(`¿Eliminar "${p.nombre}" (${p.codigo_interno}) del inventario? Su historial de movimientos se conserva.`)
+    if (!confirmed) return
+    try {
+      await eliminarProducto(p.id)
+      reloadProductos()
+    } catch (e) {
+      setListaError(e instanceof Error ? e.message : 'Error al eliminar el producto.')
+    }
+  }
+
+  async function handleEliminarMovimiento(m: Movimiento) {
+    setListaError(null)
+    const confirmed = window.confirm('¿Eliminar este movimiento? El stock del producto se recalculará automáticamente.')
+    if (!confirmed) return
+    try {
+      await eliminarMovimiento(m.id)
+      reloadProductos()
+      reloadMovimientos()
+    } catch (e) {
+      setListaError(e instanceof Error ? e.message : 'Error al eliminar el movimiento.')
     }
   }
 
@@ -194,15 +220,17 @@ export default function Productos() {
         </section>
       </div>
 
+      {listaError && <div className="error-banner">{listaError}</div>}
+
       <section className="card" style={{ marginBottom: '1.5rem' }}>
         <h2 className="form-section-title">Productos</h2>
         <table>
           <thead>
-            <tr><th>Código</th><th>Nombre</th><th>Marca</th><th>Stock actual</th><th>Mínimo</th><th>Estado</th></tr>
+            <tr><th>Código</th><th>Nombre</th><th>Marca</th><th>Stock actual</th><th>Mínimo</th><th>Estado</th>{puedeCrear && <th></th>}</tr>
           </thead>
           <tbody>
             {productos.length === 0 ? (
-              <tr><td colSpan={6} className="text-muted">No hay productos registrados todavía.</td></tr>
+              <tr><td colSpan={puedeCrear ? 7 : 6} className="text-muted">No hay productos registrados todavía.</td></tr>
             ) : (
               productos.map((p) => (
                 <tr key={p.id}>
@@ -212,6 +240,13 @@ export default function Productos() {
                   <td>{p.stock_actual}</td>
                   <td>{p.stock_minimo}</td>
                   <td><span className={badgeClass(p.estado)}>{p.estado}</span></td>
+                  {puedeCrear && (
+                    <td>
+                      <button type="button" className="btn btn-danger-ghost btn-sm" onClick={() => handleEliminarProducto(p)}>
+                        Eliminar
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
@@ -223,11 +258,11 @@ export default function Productos() {
         <h2 className="form-section-title">Historial de movimientos</h2>
         <table>
           <thead>
-            <tr><th>Fecha</th><th>Tipo</th><th>Marca</th><th>Cantidad</th><th>Motivo</th></tr>
+            <tr><th>Fecha</th><th>Tipo</th><th>Marca</th><th>Cantidad</th><th>Motivo</th>{puedeCrear && <th></th>}</tr>
           </thead>
           <tbody>
             {movimientos.length === 0 ? (
-              <tr><td colSpan={5} className="text-muted">No hay movimientos registrados todavía.</td></tr>
+              <tr><td colSpan={puedeCrear ? 6 : 5} className="text-muted">No hay movimientos registrados todavía.</td></tr>
             ) : (
               movimientos.map((m) => (
                 <tr key={m.id}>
@@ -236,6 +271,13 @@ export default function Productos() {
                   <td>{m.marca_vehiculo ?? 'N/A'}</td>
                   <td>{m.cantidad}</td>
                   <td>{m.motivo}</td>
+                  {puedeCrear && (
+                    <td>
+                      <button type="button" className="btn btn-danger-ghost btn-sm" onClick={() => handleEliminarMovimiento(m)}>
+                        Eliminar
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
