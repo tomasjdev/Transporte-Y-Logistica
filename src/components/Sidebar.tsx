@@ -7,8 +7,7 @@ export default function Sidebar() {
   return (
     <nav className="sidebar">
       <div className="sidebar-header">
-        <h2 className="sidebar-title">Trans&Logis</h2>
-        <p className="sidebar-user">{profile?.nombre}</p>
+        <h2 className="sidebar-title">ALAG</h2>
       </div>
 
       <div className="nav-links">
@@ -24,11 +23,11 @@ export default function Sidebar() {
 
         {profile?.rol === 'admin' && (
           <>
-            <NavLink to="/usuarios" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              Usuarios
-            </NavLink>
             <NavLink to="/bitacora/catalogos" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               Catálogos
+            </NavLink>
+            <NavLink to="/usuarios" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+              Usuarios
             </NavLink>
           </>
         )}
