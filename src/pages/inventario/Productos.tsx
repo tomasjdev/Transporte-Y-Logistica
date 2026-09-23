@@ -1,7 +1,9 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { crearMovimiento, crearProducto, eliminarMovimiento, eliminarProducto, fetchMovimientos, fetchProductos } from '../../lib/inventario'
+import { exportarInventarioXlsx } from '../../lib/exportInventario'
 import { MARCAS_VEHICULO, type MarcaVehiculo, type Movimiento, type Producto } from '../../types/inventario'
+import InventarioMetricas from './InventarioMetricas'
 
 function badgeClass(estado: Producto['estado']) {
   if (estado === 'Agotado') return 'badge badge-danger'
@@ -27,6 +29,7 @@ export default function Productos() {
   const [movimientoError, setMovimientoError] = useState<string | null>(null)
   const [savingMovimiento, setSavingMovimiento] = useState(false)
   const [listaError, setListaError] = useState<string | null>(null)
+  const [tab, setTab] = useState<'inventario' | 'metricas'>('inventario')
 
   function reloadProductos() {
     fetchProductos().then(setProductos)
@@ -107,11 +110,31 @@ export default function Productos() {
 
   return (
     <div className="animate-fade-in">
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1 style={{ marginBottom: '0.25rem' }}>Inventario</h1>
-        <p className="text-muted">Productos, existencias y movimientos de entrada / salida</p>
+      <div className="flex items-center justify-between" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h1 style={{ marginBottom: '0.25rem' }}>Inventario</h1>
+          <p className="text-muted">Productos, existencias y movimientos de entrada / salida</p>
+        </div>
+        {tab === 'inventario' && (
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => exportarInventarioXlsx(productos, movimientos)}>
+            Exportar a Excel
+          </button>
+        )}
       </div>
 
+      <nav className="tabs-nav">
+        <button type="button" className={`tab-btn ${tab === 'inventario' ? 'active' : ''}`} onClick={() => setTab('inventario')}>
+          Inventario
+        </button>
+        <button type="button" className={`tab-btn ${tab === 'metricas' ? 'active' : ''}`} onClick={() => setTab('metricas')}>
+          Métricas
+        </button>
+      </nav>
+
+      {tab === 'metricas' ? (
+        <InventarioMetricas productos={productos} movimientos={movimientos} />
+      ) : (
+      <>
       <div className="grid md:grid-cols-2 gap-6" style={{ marginBottom: '1.5rem' }}>
         {puedeCrear && (
           <section className="card form-section">
@@ -284,6 +307,8 @@ export default function Productos() {
           </tbody>
         </table>
       </section>
+      </>
+      )}
     </div>
   )
 }
