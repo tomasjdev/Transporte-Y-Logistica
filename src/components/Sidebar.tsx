@@ -12,7 +12,7 @@ export default function Sidebar() {
       </div>
 
       <div className="nav-links">
-        <NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} end>
+        <NavLink to="/dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} end>
           Dashboard
         </NavLink>
         <NavLink to="/bitacora" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>

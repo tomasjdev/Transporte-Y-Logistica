@@ -19,22 +19,34 @@ export default function Login() {
       setError('Correo o contraseña incorrectos.')
       return
     }
-    navigate('/', { replace: true })
+    navigate('/dashboard', { replace: true })
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+    <div className="login-page-bg">
       <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '2.5rem' }}>
         <div className="text-center" style={{ marginBottom: '2rem' }}>
-          <h1 style={{ 
-            background: 'linear-gradient(to right, #3b82f6, #8b5cf6)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            marginBottom: '0.5rem',
-            fontSize: '1.75rem'
+          <h1 style={{
+            fontFamily: "'Anton', sans-serif",
+            color: 'var(--text-main)',
+            fontSize: '3rem',
+            margin: 0,
+            lineHeight: 1,
+            letterSpacing: '2px',
+            textShadow: '0 2px 12px rgba(0, 0, 0, 0.6)'
           }}>
-            Trans&Logis
+            ALAG
           </h1>
+          <p style={{
+            fontFamily: "'Oswald', sans-serif",
+            color: 'var(--secondary)',
+            fontWeight: 600,
+            fontSize: '1rem',
+            textTransform: 'uppercase',
+            marginBottom: '1rem'
+          }}>
+            Traslados Nacionales de Carga
+          </p>
           <p className="text-muted">Accede a tu plataforma de gestión</p>
         </div>
 

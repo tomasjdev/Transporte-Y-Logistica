@@ -10,14 +10,16 @@ import Boleta from './pages/bitacora/Boleta'
 import Catalogos from './pages/bitacora/Catalogos'
 import Productos from './pages/inventario/Productos'
 import UserManagement from './pages/UserManagement'
+import LandingPage from './pages/LandingPage'
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/" element={<LandingPage />} />
         <Route
-          path="/"
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <Layout>
